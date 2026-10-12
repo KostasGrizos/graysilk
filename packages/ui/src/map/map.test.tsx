@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { along, circle, distance, lineLength } from "./geo";
+import { along, bbox, catchment, circle, distance, lineLength } from "./geo";
 import { MapLegend } from "./MapLegend";
-import { baseStyle, OSM, rasterPaint, resolveColor } from "./theme";
+import { parallelOffset } from "./layers";
+import { baseStyle, MAP_THEME, OSM, rasterPaint, resolveColor, zoomBand } from "./theme";
 
 describe("geo", () => {
   it("measures distance in metres", () => {
@@ -25,6 +26,16 @@ describe("geo", () => {
     expect(mid[1]).toBeCloseTo(1, 3);
     expect(lineLength(line)).toBeGreaterThan(222000);
   });
+  it("merges overlapping catchments into one shape, keeps far ones apart", () => {
+    // stations ~560 m apart: 500 m circles overlap and merge
+    expect(catchment([[22.95, 40.6], [22.95, 40.605]], 500).geometry.coordinates).toHaveLength(1);
+    // ~5.5 km apart: two separate polygons
+    expect(catchment([[22.95, 40.6], [22.95, 40.65]], 500).geometry.coordinates).toHaveLength(2);
+    expect(catchment([], 500).geometry.coordinates).toEqual([]);
+  });
+  it("finds the bounds of coordinates", () => {
+    expect(bbox([[22.93, 40.64], [22.97, 40.57], [22.95, 40.6]])).toEqual([[22.93, 40.57], [22.97, 40.64]]);
+  });
 });
 
 describe("theme", () => {
@@ -32,6 +43,12 @@ describe("theme", () => {
     expect(resolveColor(1, "chalk")).toBe("#2F6FDB");
     expect(resolveColor(1, "night")).toBe("#4C8DF6");
     expect(resolveColor("#123456", "night")).toBe("#123456");
+    expect(resolveColor("ink", "chalk")).toBe(MAP_THEME.chalk.ink);
+    expect(resolveColor("ink", "night")).toBe(MAP_THEME.night.ink);
+  });
+  it("spaces parallel lines a width + 2 px apart and bands the zoom", () => {
+    expect(parallelOffset(6) * 2).toBe(8);
+    expect([zoomBand(11), zoomBand(13), zoomBand(15)]).toEqual(["far", "mid", "near"]);
   });
   it("inverts the OSM raster for Night", () => {
     const night = rasterPaint("night");
@@ -48,5 +65,13 @@ describe("MapLegend", () => {
     expect(screen.getByRole("button", { name: "Catchment" })).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(screen.getByRole("button", { name: "Line 1" }));
     expect(onToggle).toHaveBeenCalledWith("l1");
+  });
+  it("folds away from its title", async () => {
+    render(<MapLegend title="Layers" defaultOpen entries={[{ id: "l1", label: "Line 1", kind: "line", color: 6 }]} />);
+    const title = screen.getByRole("button", { name: "Layers" });
+    expect(title).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(title);
+    expect(title).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Line 1")).not.toBeVisible();
   });
 });

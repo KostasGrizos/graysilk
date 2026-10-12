@@ -1,6 +1,6 @@
 {
   "name": "@graysilk/ui",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "GraySilk brand React components (Platform Edge). Source package for Vite apps.",
   "type": "module",
@@ -22,9 +22,9 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
+    "maplibre-gl": ">=5",
     "react": ">=18.3",
-    "react-dom": ">=18.3",
-    "maplibre-gl": ">=5"
+    "react-dom": ">=18.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.8.0",
@@ -42,7 +42,8 @@
     "vitest": "^3.2.7"
   },
   "dependencies": {
-    "pixelarticons": "2.4.2"
+    "pixelarticons": "2.4.2",
+    "polygon-clipping": "0.15.7"
   },
   "peerDependenciesMeta": {
     "maplibre-gl": {

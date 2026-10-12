@@ -1,3 +1,8 @@
+import * as clip from "polygon-clipping";
+
+// polygon-clipping ships a default export at runtime but types named exports; accept both.
+const { union } = (clip as unknown as { default?: typeof clip }).default ?? clip;
+
 export type LngLat = [number, number];
 
 const R = 6371008.8;
@@ -44,4 +49,24 @@ export function along(coords: LngLat[], t: number): { at: LngLat; bearing: numbe
     target -= seg;
   }
   return { at: coords[coords.length - 1], bearing: 0 };
+}
+
+/**
+ * Walking catchment around many points, merged into one shape so overlaps don't stack
+ * into darker patches (e.g. 500 m around every station of a network).
+ */
+export function catchment(points: LngLat[], radiusM: number, steps = 48): GeoJSON.Feature<GeoJSON.MultiPolygon> {
+  const rings = points.map((p) => circle(p, radiusM, steps).geometry.coordinates as [number, number][][]);
+  const merged = rings.length ? union(rings[0], ...rings.slice(1)) : [];
+  return { type: "Feature", properties: {}, geometry: { type: "MultiPolygon", coordinates: merged } };
+}
+
+/** [[west, south], [east, north]] around any coordinates, for <MapView bounds>. */
+export function bbox(coords: LngLat[]): [LngLat, LngLat] {
+  let [w, s, e, n] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (const [x, y] of coords) {
+    w = Math.min(w, x); e = Math.max(e, x);
+    s = Math.min(s, y); n = Math.max(n, y);
+  }
+  return [[w, s], [e, n]];
 }

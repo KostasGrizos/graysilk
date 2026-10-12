@@ -15,10 +15,16 @@ export const SERIES = {
   night: ["#4C8DF6", "#BA8400", "#E0609F", "#7A9A2A", "#8F78EC", "#EE5219", "#2E9BD0", "#E0544B"],
 } as const;
 
-/** A colour for GL paint: a categorical slot (1–8) or any hex. */
-export type MapColor = number | string;
-export const resolveColor = (c: MapColor, theme: MapTheme) =>
-  typeof c === "number" ? SERIES[theme][Math.min(8, Math.max(1, Math.round(c))) - 1] : c;
+/** A colour for GL paint: a categorical slot (1–8), "ink" / "muted" (follow the theme), or any hex. */
+export type MapColor = number | "ink" | "muted" | (string & {});
+export const resolveColor = (c: MapColor, theme: MapTheme): string =>
+  typeof c === "number"
+    ? SERIES[theme][Math.min(8, Math.max(1, Math.round(c))) - 1]
+    : c === "ink"
+      ? MAP_THEME[theme].ink
+      : c === "muted"
+        ? MAP_THEME[theme].muted
+        : c;
 
 export interface Basemap {
   /** XYZ raster tile template(s). */
@@ -63,3 +69,7 @@ export function baseStyle(theme: MapTheme, basemap: Basemap): StyleSpecification
     ],
   };
 }
+
+/** Zoom bands that overlays use to declutter (pins shrink when far; labels show when near). */
+export type ZoomBand = "far" | "mid" | "near";
+export const zoomBand = (z: number): ZoomBand => (z < 12.5 ? "far" : z < 14.5 ? "mid" : "near");

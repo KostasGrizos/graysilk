@@ -1,4 +1,4 @@
-import maplibregl, { type Map as GLMap } from "maplibre-gl";
+import maplibregl, { type LngLatBoundsLike, type Map as GLMap, type PaddingOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -8,7 +8,7 @@ import { ZoomOut } from "pixelarticons/react/ZoomOut.js";
 import { Compass } from "pixelarticons/react/Compass.js";
 import { Target } from "pixelarticons/react/Target.js";
 import { IconButton } from "../components/IconButton/IconButton";
-import { baseStyle, MAP_THEME, OSM, rasterPaint, type Basemap, type MapTheme, type MapThemeSetting } from "./theme";
+import { baseStyle, MAP_THEME, OSM, rasterPaint, zoomBand, type Basemap, type MapTheme, type MapThemeSetting } from "./theme";
 
 export { useMap } from "./context";
 
@@ -24,9 +24,15 @@ function useResolvedTheme(setting: MapThemeSetting): MapTheme {
   return setting === "system" ? (dark ? "night" : "chalk") : setting;
 }
 
+const DEFAULT_PADDING: PaddingOptions = { top: 32, bottom: 32, left: 32, right: 72 };
+
 export interface MapViewProps {
-  /** [lng, lat] */
-  center: [number, number];
+  /** Fit this area on any screen size: [[west, south], [east, north]] (see bbox()). Preferred over center + zoom. */
+  bounds?: LngLatBoundsLike;
+  /** Space kept clear around `bounds`, in px. Default leaves room for the controls on the right. */
+  padding?: number | PaddingOptions;
+  /** [lng, lat], used when no bounds are given. */
+  center?: [number, number];
   zoom?: number;
   /** chalk (light) · night (dark) · system (follows the OS, default). */
   theme?: MapThemeSetting;
@@ -38,6 +44,11 @@ export interface MapViewProps {
   label: string;
   /** Show the zoom / north / recenter controls. */
   controls?: boolean;
+  /**
+   * Embedded-page manners (default on): one-finger drag scrolls the page on phones and the wheel
+   * scrolls the page unless Ctrl/⌘ is held, so the map never traps scrolling.
+   */
+  cooperative?: boolean;
   /** Overlay layers, legend, popups. */
   children?: ReactNode;
   className?: string;
@@ -46,23 +57,38 @@ export interface MapViewProps {
 }
 
 /** An interactive OpenStreetMap in the GraySilk theme. Put overlay layers inside as children. */
-export function MapView({ center, zoom = 13, theme = "system", basemap = OSM, height = 480, label, controls = true, children, className, onReady }: MapViewProps) {
+export function MapView({ bounds, padding = DEFAULT_PADDING, center = [0, 0], zoom = 13, theme = "system", basemap = OSM, height = 480, label, controls = true, cooperative = true, children, className, onReady }: MapViewProps) {
   const box = useRef<HTMLDivElement>(null);
+  const frame = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<GLMap | null>(null);
   const resolved = useResolvedTheme(theme);
-  const home = useRef({ center, zoom });
+  const home = useRef({ bounds, padding, center, zoom });
+  const goHome = (m: GLMap, animate: boolean) => {
+    const h = home.current;
+    if (h.bounds) m.fitBounds(h.bounds, { padding: h.padding, bearing: 0, pitch: 0, animate });
+    else m.flyTo({ center: h.center, zoom: h.zoom, bearing: 0, pitch: 0, animate });
+  };
 
   useEffect(() => {
     if (!box.current) return;
     const m = new maplibregl.Map({
       container: box.current,
       style: baseStyle(resolved, basemap),
-      center,
-      zoom,
+      ...(bounds ? { bounds, fitBoundsOptions: { padding } } : { center, zoom }),
       attributionControl: false,
       dragRotate: true,
-      cooperativeGestures: false,
+      cooperativeGestures: cooperative,
+      locale: {
+        "CooperativeGesturesHandler.WindowsHelpText": "Ctrl + scroll to zoom the map",
+        "CooperativeGesturesHandler.MacHelpText": "⌘ + scroll to zoom the map",
+        "CooperativeGesturesHandler.MobileHelpText": "Use two fingers to move the map",
+      },
     });
+    const band = () => {
+      if (frame.current) frame.current.dataset.zoom = zoomBand(m.getZoom());
+    };
+    band();
+    m.on("zoom", band);
     m.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 96 }), "bottom-right");
     // Ready as soon as the style is in, so overlays don't wait for (or depend on) basemap tiles.
@@ -92,14 +118,14 @@ export function MapView({ center, zoom = 13, theme = "system", basemap = OSM, he
   const t = MAP_THEME[resolved];
   return (
     <MapContext.Provider value={{ map, theme: resolved, ground: t.ground, ink: t.ink }}>
-      <div className={`gs-map ${className ?? ""}`} data-gs-theme={t.gsTheme} style={{ height }}>
+      <div ref={frame} className={`gs-map ${className ?? ""}`} data-gs-theme={t.gsTheme} style={{ height }}>
         <div ref={box} className="gs-map-canvas" role="region" aria-label={label} />
         {controls && map && (
           <div className="gs-map-controls">
             <IconButton label="Zoom in" icon={<ZoomIn />} variant="secondary" size="sm" onClick={() => map.zoomIn()} />
             <IconButton label="Zoom out" icon={<ZoomOut />} variant="secondary" size="sm" onClick={() => map.zoomOut()} />
             <IconButton label="Face north" icon={<Compass />} variant="secondary" size="sm" onClick={() => map.resetNorthPitch()} />
-            <IconButton label="Back to start" icon={<Target />} variant="secondary" size="sm" onClick={() => map.flyTo({ ...home.current, bearing: 0, pitch: 0 })} />
+            <IconButton label="Back to start" icon={<Target />} variant="secondary" size="sm" onClick={() => goHome(map, true)} />
           </div>
         )}
         {children}

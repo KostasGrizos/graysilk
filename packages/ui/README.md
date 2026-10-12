@@ -69,12 +69,13 @@ import { Server } from "pixelarticons/react/Server.js";
 An interactive OpenStreetMap in the brand, with your own layers on top. It needs `maplibre-gl` (optional peer dependency) and is a separate entry, so apps without maps don't load it.
 
 ```tsx
-import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, VehicleLayer, MapLegend, circle } from "@graysilk/ui/map";
+import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, VehicleLayer, MapLegend,
+  bbox, catchment, parallelOffset } from "@graysilk/ui/map";
 
-<MapView center={[22.95, 40.61]} zoom={12} label="Thessaloniki metro">   {/* theme="system" | "chalk" | "night" */}
-  <AreaLayer id="walk" data={catchments} color={6} fillOpacity={0.05} />
-  <LineLayer id="l1" data={line1} color={6} width={6} />
-  <LineLayer id="l2" data={line2} color={1} dashed />                       {/* planned */}
+<MapView bounds={bbox(allStations)} label="Thessaloniki Metro">        {/* theme="system" | "chalk" | "night" */}
+  <AreaLayer id="walk" data={catchment(allStations, 500)} color="ink" fillOpacity={0.06} outlineDashed />
+  <LineLayer id="l1" data={line1} color={6} width={6} onClick={showLine} />
+  <LineLayer id="l2" data={line2} color={1} width={6} />               {/* shared track: per-feature `offset` */}
   <StationLayer stations={stations} color={6} onSelect={setStation} />
   <PointLayer points={places} onSelect={setPlace} />
   <VehicleLayer vehicles={live} />
@@ -83,10 +84,17 @@ import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, Vehi
 </MapView>
 ```
 
-- Basemap: standard OSM raster tiles, recoloured on the GPU. Chalk is greyscale with lifted blacks; Night is greyscale and inverted (`raster-brightness-min/max` swapped). Overlays carry all the colour. Pass `basemap={…}` for another tile server. For heavy traffic, use your own tiles (OSM tile policy).
-- Colours: `color` takes a data slot 1–8 (resolved per theme) or a hex. Casings use the theme ground.
-- Stations: focusable pixel squares (buttons with labels in Plex Sans). Interchange = bigger square, terminus = yellow, planned = dashed. Labels appear from `labelZoom` or on hover/focus.
-- Points: square pins with a 24 px Pixelarticons icon. Vehicles: the brand pixel train; feed positions and it moves in steps.
+- **Framing**: pass `bounds` (use `bbox()`) so the network fits any screen; `center` + `zoom` also work. "Back to start" returns there.
+- **Embedding**: `cooperative` (on by default) keeps page scrolling working: Ctrl/⌘ + scroll zooms, two fingers move the map on phones.
+- **Basemap**: standard OSM raster tiles, recoloured on the GPU. Chalk is greyscale with lifted blacks; Night is greyscale and inverted (`raster-brightness-min/max` swapped). Overlays carry all the colour. Pass `basemap={…}` for another tile server; for heavy traffic use your own tiles (OSM tile policy).
+- **Colours**: `color` takes a data slot 1–8 (resolved per theme), `"ink"` / `"muted"` (follow the theme), or a hex. Casings use the theme ground.
+- **Lines**: `dashed` = planned. Lines that share track run side by side: give each line's shared piece an `offset` property of ±`parallelOffset(width)` (positive = right of the drawing direction) and its own branch `offset: 0`. A 16 px invisible hit area makes `onClick` easy to tap.
+- **Areas**: `catchment(points, metres)` merges overlapping circles into one shape, so overlaps don't stack darker. `outlineDashed` for soft edges.
+- **Stations**: focusable pixel squares centred on the station. Shared track (more than one line in `lines`) = one larger ink square spanning the parallel lines; interchange = heavier square with a centre pixel; terminus = yellow; planned = dashed. Names show for termini and interchanges, from `labelZoom` for the rest, and on hover/focus; `labelSide: "left"` moves a name off the line.
+- **Decluttering**: `<MapView>` sets `data-zoom` = `far` / `mid` / `near` (see `zoomBand`). When far, stations get smaller and pins become small pixel diamonds; the selected pin stays full size.
+- **Points**: square pins with a 24 px Pixelarticons icon. **Vehicles**: the brand pixel train; feed positions and it moves in steps.
+- **Popups**: brand cards; Escape closes them and puts focus back on the station or pin that opened them.
+- **Legend**: entries toggle layers; the title folds it away (starts folded on maps under 560 px wide).
 - `useMap()` gives the MapLibre map for custom layers.
 
 ## Scripts

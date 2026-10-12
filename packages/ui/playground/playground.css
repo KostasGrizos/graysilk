@@ -232,3 +232,9 @@ body {
 .pg-popup { display: flex; flex-direction: column; gap: 6px; padding-right: 20px; max-width: 260px; }
 .pg-map-note { margin: 0; font-size: 13px; line-height: 20px; color: var(--pg-muted); max-width: 72ch; }
 .pg-map-note code { font-family: var(--gs-font-mono); font-size: 12px; color: var(--pg-fg); }
+.pg-line-chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 2px 8px 2px 4px;
+  border: 1px solid var(--gs-border-strong); font-family: var(--gs-font-mono); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--gs-text);
+}
+.pg-line-chip::before { content: ""; width: 12px; height: 12px; background: var(--c); }

@@ -14,15 +14,20 @@ export interface Station {
   lngLat: [number, number];
   /** Line ids or names serving the station, for the accessible label. */
   lines?: string[];
-  /** interchange = larger square; terminus = yellow fill, like the logo's end stop. */
+  /** interchange = larger square with a centre pixel; terminus = yellow fill, like the logo's end stop. */
   kind?: "station" | "interchange" | "terminus";
   /** Planned / under construction: hollow square. */
   planned?: boolean;
+  /** Which side the name sits on (default right). Pick the side away from the line. */
+  labelSide?: "left" | "right";
 }
 
 export interface StationLayerProps {
   stations: Station[];
-  /** Border colour: the line's slot or hex. Interchanges use ink. */
+  /**
+   * Border colour: the line's slot or hex. Interchanges and stations on shared track
+   * (more than one entry in `lines`) use ink and a larger square that spans the parallel lines.
+   */
   color: MapColor;
   /** Labels show from this zoom up (they always show on focus/hover). */
   labelZoom?: number;
@@ -31,7 +36,7 @@ export interface StationLayerProps {
   onSelect?: (station: Station) => void;
 }
 
-/** Stations as focusable pixel squares with labels in the brand font. */
+/** Stations as focusable pixel squares with labels in the brand font. Markers are centred on the station. */
 export function StationLayer({ stations, color, labelZoom = 13, visible = true, selectedId, onSelect }: StationLayerProps) {
   const { map, theme } = useMap();
   const markers = useRef(new Map<string, { marker: Marker; el: HTMLElement }>());
@@ -44,6 +49,8 @@ export function StationLayer({ stations, color, labelZoom = 13, visible = true, 
       const el = document.createElement("div");
       el.className = "gs-station";
       el.dataset.kind = s.kind ?? "station";
+      el.dataset.side = s.labelSide ?? "right";
+      if ((s.lines?.length ?? 0) > 1) el.dataset.shared = "true";
       if (s.planned) el.dataset.planned = "true";
       const btn = document.createElement("button");
       btn.type = "button";
@@ -57,7 +64,7 @@ export function StationLayer({ stations, color, labelZoom = 13, visible = true, 
       label.className = "gs-station-label";
       label.textContent = s.name;
       el.append(btn, label);
-      const marker = new maplibregl.Marker({ element: el, anchor: "left", offset: [-9, 0] }).setLngLat(s.lngLat).addTo(map);
+      const marker = new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(s.lngLat).addTo(map);
       markers.current.set(s.id, { marker, el });
     }
     const current = markers.current;
@@ -108,7 +115,10 @@ export interface PointLayerProps {
   onSelect?: (point: MapPoint) => void;
 }
 
-/** Pixel pins with a 24 px Pixelarticons icon. Pair with <MapPopup> for the card. */
+/**
+ * Pixel pins with a 24 px Pixelarticons icon. Pair with <MapPopup> for the card.
+ * Zoomed out ("far" band) they shrink to small squares in the pin colour; the selected one stays full size.
+ */
 export function PointLayer({ points, color = 2, visible = true, selectedId, onSelect }: PointLayerProps) {
   const { map, theme } = useMap();
   const items = useRef(new Map<string, { marker: Marker; el: HTMLElement; root: Root }>());
@@ -159,7 +169,10 @@ export interface MapPopupProps {
   offset?: number;
 }
 
-/** A brand card anchored to a map position. Renders nothing while lngLat is null. */
+/**
+ * A brand card anchored to a map position. Renders nothing while lngLat is null.
+ * Escape closes it and returns focus to whatever opened it (e.g. the station button).
+ */
 export function MapPopup({ lngLat, onClose, children, offset = 14 }: MapPopupProps) {
   const { map } = useMap();
   const [node] = useState(() => (typeof document !== "undefined" ? document.createElement("div") : null));
@@ -169,13 +182,21 @@ export function MapPopup({ lngLat, onClose, children, offset = 14 }: MapPopupPro
 
   useEffect(() => {
     if (!map || !node || !lngLat) return;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const p = new maplibregl.Popup({ offset, closeButton: true, closeOnClick: true, maxWidth: "320px", className: "gs-popup", focusAfterOpen: true })
       .setLngLat(lngLat)
       .setDOMContent(node)
       .addTo(map);
     p.on("close", () => close.current());
     popup.current = p;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      p.remove();
+      if (opener?.isConnected && opener !== document.body) opener.focus();
+    };
+    document.addEventListener("keydown", onKey);
     return () => {
+      document.removeEventListener("keydown", onKey);
       p.remove();
       popup.current = null;
     };

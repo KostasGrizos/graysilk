@@ -29,13 +29,22 @@
   border: 1px solid var(--gs-border); border-radius: 0; padding: 2px 6px;
 }
 .gs-map .maplibregl-ctrl-attrib a { color: var(--gs-text); }
-.gs-map .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 24px; }
+/* compact: just the (i) button; open: text with room for the button on the right */
+.gs-map .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 24px; min-width: 24px; padding: 0; box-sizing: border-box; }
+.gs-map .maplibregl-ctrl-attrib.maplibregl-compact-show { padding: 3px 30px 3px 8px; }
+.gs-map .maplibregl-ctrl-attrib-button { border-radius: 0; background-color: transparent; }
 .gs-map .maplibregl-ctrl-attrib-button { filter: var(--gs-attrib-filter, none); }
 .gs-map[data-gs-theme="dark"] { --gs-attrib-filter: invert(1); }
 .gs-map .maplibregl-ctrl-scale {
   background: color-mix(in oklab, var(--gs-surface) 85%, transparent);
   color: var(--gs-text); border: 2px solid var(--gs-text); border-top: 0; border-radius: 0;
   font-family: var(--gs-font-mono); font-size: 10px; padding: 0 4px;
+}
+
+/* ---- "Ctrl + scroll to zoom" hint (cooperative gestures) ---- */
+.gs-map .maplibregl-cooperative-gesture-screen {
+  background: color-mix(in oklab, var(--gs-graphite) 55%, transparent); color: var(--gs-chalk);
+  font-family: var(--gs-font-mono); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
 }
 
 /* ---- popup: a brand card with a hard pixel shadow ---- */
@@ -51,31 +60,48 @@
   border-radius: var(--gs-radius-control); right: 4px; top: 4px;
 }
 .gs-popup .maplibregl-popup-close-button:hover { background: var(--gs-hover); }
+.gs-popup .maplibregl-popup-close-button:focus { outline: none; }
 .gs-popup .maplibregl-popup-close-button:focus-visible { outline: 2px solid var(--gs-focus); }
 
-/* ---- stations: pixel squares, labels in Plex Sans with a ground halo ---- */
-.gs-station { display: flex; align-items: center; gap: 6px; pointer-events: none; }
+/* ---- stations: pixel squares centred on the station, labels in Plex Sans with a ground halo ---- */
+/* no position here: MapLibre positions markers absolutely, which also anchors the label */
+.gs-station { display: grid; place-items: center; pointer-events: none; --dot: 14px; --ring: 3px; }
 .gs-station-dot {
-  pointer-events: auto; cursor: pointer; flex-shrink: 0;
-  width: 14px; height: 14px; padding: 0; border: 3px solid var(--line, var(--gs-text)); border-radius: 0;
-  background: var(--gs-bg);
+  pointer-events: auto; cursor: pointer;
+  width: var(--dot); height: var(--dot); padding: 0; border: var(--ring) solid var(--line, var(--gs-text)); border-radius: 0;
+  background: var(--gs-bg); display: grid; place-items: center;
 }
-.gs-station[data-kind="interchange"] .gs-station-dot { width: 18px; height: 18px; border-color: var(--gs-text); border-width: 4px; }
+/* shared track: one square spanning the parallel lines, in ink */
+.gs-station[data-shared] { --dot: 20px; }
+.gs-station[data-shared] .gs-station-dot { border-color: var(--gs-text); }
+/* interchange: bigger, heavier, with a centre pixel */
+.gs-station[data-kind="interchange"] { --dot: 22px; --ring: 4px; }
+.gs-station[data-kind="interchange"] .gs-station-dot { border-color: var(--gs-text); }
+.gs-station[data-kind="interchange"] .gs-station-dot::after { content: ""; width: 4px; height: 4px; background: var(--gs-text); }
 .gs-station[data-kind="terminus"] .gs-station-dot { background: var(--gs-yellow); border-color: var(--gs-text); }
 .gs-station[data-planned] .gs-station-dot { border-style: dashed; background: transparent; }
+/* zoomed out: smaller squares so the lines carry the picture */
+.gs-map[data-zoom="far"] .gs-station { --dot: 10px; --ring: 2px; }
+.gs-map[data-zoom="far"] .gs-station[data-shared] { --dot: 14px; }
+.gs-map[data-zoom="far"] .gs-station[data-kind="interchange"] { --dot: 16px; --ring: 3px; }
+.gs-map[data-zoom="far"] .gs-station[data-kind="interchange"] .gs-station-dot::after { width: 2px; height: 2px; }
 .gs-station[data-selected] .gs-station-dot,
 .gs-station-dot:hover { box-shadow: 0 0 0 3px var(--gs-bg), 0 0 0 5px var(--gs-text); }
 .gs-station-dot:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: 3px; }
 .gs-station-label {
+  position: absolute; top: 50%; left: calc(100% + 6px); transform: translateY(-50%);
   display: none; white-space: nowrap;
   font-size: 12px; line-height: 16px; font-weight: 600; color: var(--gs-text);
   text-shadow: 0 0 2px var(--gs-bg), 0 0 2px var(--gs-bg), 0 0 3px var(--gs-bg), 1px 1px 0 var(--gs-bg), -1px -1px 0 var(--gs-bg);
 }
+.gs-station[data-side="left"] .gs-station-label { left: auto; right: calc(100% + 6px); }
 .gs-map[data-labels] .gs-station-label,
 .gs-station[data-kind="terminus"] .gs-station-label,
+.gs-station[data-kind="interchange"] .gs-station-label,
 .gs-station[data-selected] .gs-station-label,
 .gs-station:has(.gs-station-dot:hover) .gs-station-label,
 .gs-station:has(.gs-station-dot:focus-visible) .gs-station-label { display: block; }
+.gs-station:has(.gs-station-dot:hover), .gs-station[data-selected] { z-index: 1; }
 
 /* ---- pins: square with a pixel pointer, 24 px icon ---- */
 .gs-pin {
@@ -93,6 +119,19 @@
 .gs-pin[data-selected], .gs-pin:hover { background: var(--pin, var(--gs-accent)); color: var(--gs-graphite); }
 .gs-pin:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: 3px; }
 .gs-pin svg { shape-rendering: crispEdges; }
+/* zoomed out: a small pixel diamond in the pin colour, a shape no station uses.
+   The selected pin stays full size. */
+.gs-map[data-zoom="far"] .gs-pin:not([data-selected]) {
+  width: 14px; height: 14px; margin-bottom: 0; border: 0; background: none; box-shadow: none;
+  filter: drop-shadow(1.5px 0 0 var(--gs-text)) drop-shadow(-1.5px 0 0 var(--gs-text)) drop-shadow(0 1.5px 0 var(--gs-text)) drop-shadow(0 -1.5px 0 var(--gs-text));
+}
+.gs-map[data-zoom="far"] .gs-pin:not([data-selected])::before {
+  content: ""; position: absolute; inset: 0; background: var(--pin, var(--gs-accent));
+  clip-path: polygon(33.3% 0, 66.7% 0, 66.7% 16.7%, 83.3% 16.7%, 83.3% 33.3%, 100% 33.3%, 100% 66.7%, 83.3% 66.7%, 83.3% 83.3%, 66.7% 83.3%, 66.7% 100%, 33.3% 100%, 33.3% 83.3%, 16.7% 83.3%, 16.7% 66.7%, 0 66.7%, 0 33.3%, 16.7% 33.3%, 16.7% 16.7%, 33.3% 16.7%);
+}
+.gs-map[data-zoom="far"] .gs-pin:not([data-selected]) svg,
+.gs-map[data-zoom="far"] .gs-pin:not([data-selected])::after { display: none; }
+.gs-map[data-zoom="far"] .gs-pin:not([data-selected]):focus-visible { outline-offset: 2px; }
 
 /* ---- vehicles: the brand's pixel train ---- */
 .gs-vehicle { width: 32px; height: 14px; filter: drop-shadow(1px 1px 0 var(--gs-bg)) drop-shadow(-1px -1px 0 var(--gs-bg)); }
@@ -103,31 +142,42 @@
 
 /* ---- legend ---- */
 .gs-map-legend {
-  position: absolute; left: 12px; bottom: 12px; z-index: 2; max-width: min(260px, calc(100% - 24px));
+  position: absolute; left: 12px; bottom: 12px; z-index: 3; max-width: min(260px, calc(100% - 24px));
   background: var(--gs-surface); border: 1px solid var(--gs-border); box-shadow: 4px 4px 0 var(--gs-border);
   padding: 10px 12px;
 }
 .gs-map-legend-title {
-  margin: 0 0 6px; font-family: var(--gs-font-mono); font-size: 11px; font-weight: 600;
+  margin: 0; font-family: var(--gs-font-mono); font-size: 11px; font-weight: 600;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--gs-text-muted);
 }
+.gs-map-legend[data-open] .gs-map-legend-title { margin-bottom: 6px; }
+button.gs-map-legend-title {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 28px;
+  padding: 0 0 0 4px; background: none; border: 0; border-radius: var(--gs-radius-control); cursor: pointer;
+}
+button.gs-map-legend-title:hover { color: var(--gs-text); background: var(--gs-hover); }
+button.gs-map-legend-title:focus-visible { outline: 2px solid var(--gs-focus); }
+.gs-map-legend ul[hidden] { display: none; }
 .gs-map-legend ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.gs-map-legend button, .gs-map-legend-row {
+.gs-map-legend li button, .gs-map-legend-row {
   display: flex; align-items: center; gap: 10px; width: 100%; min-height: 28px; padding: 2px 4px;
   background: none; border: 0; border-radius: var(--gs-radius-control); color: var(--gs-text);
   font: inherit; font-size: 13px; text-align: left; cursor: pointer;
 }
 .gs-map-legend-row { cursor: default; }
-.gs-map-legend button:hover { background: var(--gs-hover); }
-.gs-map-legend button:focus-visible { outline: 2px solid var(--gs-focus); }
-.gs-map-legend button[aria-pressed="false"] { color: var(--gs-text-muted); text-decoration: line-through; }
-.gs-map-legend button[aria-pressed="false"] .gs-key { opacity: 0.3; }
+.gs-map-legend li button:hover { background: var(--gs-hover); }
+.gs-map-legend li button:focus-visible { outline: 2px solid var(--gs-focus); }
+.gs-map-legend li button[aria-pressed="false"] { color: var(--gs-text-muted); text-decoration: line-through; }
+.gs-map-legend li button[aria-pressed="false"] .gs-key { opacity: 0.3; }
 .gs-key { flex-shrink: 0; width: 20px; display: inline-block; }
 .gs-key-line { height: 4px; background: var(--key); }
 .gs-key-planned { height: 4px; background: repeating-linear-gradient(90deg, var(--key) 0 6px, transparent 6px 10px); }
-.gs-key-area { height: 14px; background: color-mix(in oklab, var(--key) 18%, transparent); border: 1.5px solid var(--key); }
+.gs-key-area { height: 14px; background: color-mix(in oklab, var(--key) 12%, transparent); border: 1.5px dashed var(--key); }
 .gs-key-station { width: 12px; height: 12px; margin: 0 4px; border: 3px solid var(--key); background: var(--gs-bg); }
-.gs-key-point { width: 14px; height: 14px; margin: 0 3px; border: 2px solid var(--gs-text); box-shadow: inset 0 -3px 0 var(--key); }
+.gs-key-point {
+  width: 14px; height: 14px; margin: 0 3px; background: var(--key);
+  clip-path: polygon(33.3% 0, 66.7% 0, 66.7% 16.7%, 83.3% 16.7%, 83.3% 33.3%, 100% 33.3%, 100% 66.7%, 83.3% 66.7%, 83.3% 83.3%, 66.7% 83.3%, 66.7% 100%, 33.3% 100%, 33.3% 83.3%, 16.7% 83.3%, 16.7% 66.7%, 0 66.7%, 0 33.3%, 16.7% 33.3%, 16.7% 16.7%, 33.3% 16.7%);
+}
 .gs-key-vehicle { height: 8px; background: var(--key); box-shadow: inset 0 -2px 0 var(--gs-yellow); }
 
 @media (prefers-reduced-motion: reduce) {

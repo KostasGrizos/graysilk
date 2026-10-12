@@ -40,32 +40,47 @@ function useVisibility(layerIds: string[], visible: boolean) {
 
 export interface LineLayerProps {
   id: string;
-  /** LineString / MultiLineString features. */
+  /** LineString / MultiLineString features. A feature's `offset` property overrides `offset` for that piece. */
   data: Data;
-  /** Slot 1–8 from the data palette, or a hex. */
+  /** Slot 1–8 from the data palette, "ink", or a hex. */
   color: MapColor;
   /** Line width at zoom 14, in px. */
   width?: number;
+  /**
+   * Sideways shift at zoom 14, in px (positive = right of the drawing direction). Use it to run
+   * lines side by side where they share track; parallelOffset(width) gives the right spacing.
+   */
+  offset?: number;
   /** Dashed = planned or under construction. */
   dashed?: boolean;
   /** A ground-coloured casing so lines stay readable over the basemap and each other. */
   casing?: boolean;
   visible?: boolean;
+  /** Click / tap on the line. A 16 px invisible hit area makes thin lines easy to tap. */
   onClick?: (feature: GeoJSON.Feature, e: MapLayerMouseEvent) => void;
 }
 
+/** Offsets for lines sharing track: centres one width + 2 px apart, with a ground gap between. */
+export const parallelOffset = (width = 5) => (width + 2) / 2;
+
+const scaled = (v: ExpressionSpecification | number): ExpressionSpecification => [
+  "interpolate", ["linear"], ["zoom"], 10, ["*", 0.5, v], 14, v, 18, ["*", 1.8, v],
+];
+
 /** A route, line or path drawn over the map. */
-export function LineLayer({ id, data, color, width: w = 5, dashed = false, casing = true, visible = true, onClick }: LineLayerProps) {
+export function LineLayer({ id, data, color, width: w = 5, offset = 0, dashed = false, casing = true, visible = true, onClick }: LineLayerProps) {
   const { theme, ground } = useMap();
-  const ids = [`${id}-casing`, id];
+  const ids = [`${id}-casing`, id, `${id}-hit`];
+  const shift = scaled(["coalesce", ["get", "offset"], offset]);
   const map = useSource(id, data, ids, () => {
     if (casing)
-      map!.addLayer({ id: `${id}-casing`, type: "line", source: id, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ground, "line-width": width(w + 4) } });
+      map!.addLayer({ id: `${id}-casing`, type: "line", source: id, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ground, "line-width": width(w + 4), "line-offset": shift } });
     map!.addLayer({
       id, type: "line", source: id,
       layout: { "line-cap": dashed ? "butt" : "round", "line-join": "round" },
-      paint: { "line-color": resolveColor(color, theme), "line-width": width(w), ...(dashed ? { "line-dasharray": [1.4, 1] } : {}) },
+      paint: { "line-color": resolveColor(color, theme), "line-width": width(w), "line-offset": shift, ...(dashed ? { "line-dasharray": [1.4, 1] } : {}) },
     });
+    map!.addLayer({ id: `${id}-hit`, type: "line", source: id, layout: { "line-join": "round" }, paint: { "line-color": "#000", "line-opacity": 0, "line-width": 16, "line-offset": shift } });
   });
   useVisibility(ids, visible);
   useEffect(() => {
@@ -75,16 +90,17 @@ export function LineLayer({ id, data, color, width: w = 5, dashed = false, casin
   }, [map, id, color, theme, ground]);
   useEffect(() => {
     if (!map || !onClick) return;
+    const hit = `${id}-hit`;
     const click = (e: MapLayerMouseEvent) => e.features?.[0] && onClick(e.features[0] as unknown as GeoJSON.Feature, e);
     const enter = () => (map.getCanvas().style.cursor = "pointer");
     const leave = () => (map.getCanvas().style.cursor = "");
-    map.on("click", id, click);
-    map.on("mouseenter", id, enter);
-    map.on("mouseleave", id, leave);
+    map.on("click", hit, click);
+    map.on("mouseenter", hit, enter);
+    map.on("mouseleave", hit, leave);
     return () => {
-      map.off("click", id, click);
-      map.off("mouseenter", id, enter);
-      map.off("mouseleave", id, leave);
+      map.off("click", hit, click);
+      map.off("mouseenter", hit, enter);
+      map.off("mouseleave", hit, leave);
     };
   }, [map, id, onClick]);
   return null;
@@ -102,11 +118,13 @@ export interface AreaLayerProps {
   outline?: boolean;
   /** Outline strength, 0–1 (default 0.8). */
   outlineOpacity?: number;
+  /** Dashed outline, e.g. for catchments and study areas (soft edges). */
+  outlineDashed?: boolean;
   visible?: boolean;
 }
 
 /** Zones, catchments, study areas, choropleths. */
-export function AreaLayer({ id, data, color, fillOpacity = 0.12, getColor, outline = true, outlineOpacity = 0.8, visible = true }: AreaLayerProps) {
+export function AreaLayer({ id, data, color, fillOpacity = 0.12, getColor, outline = true, outlineOpacity = 0.8, outlineDashed = false, visible = true }: AreaLayerProps) {
   const { theme } = useMap();
   const painted: Data = getColor
     ? { type: "FeatureCollection", features: (data.type === "FeatureCollection" ? data.features : [data]).map((f) => ({ ...f, properties: { ...f.properties, __gs_fill: getColor(f) } })) }
@@ -115,7 +133,7 @@ export function AreaLayer({ id, data, color, fillOpacity = 0.12, getColor, outli
   const ids = [`${id}-fill`, `${id}-outline`];
   const map = useSource(id, painted, ids, () => {
     map!.addLayer({ id: `${id}-fill`, type: "fill", source: id, paint: { "fill-color": fill(), "fill-opacity": fillOpacity } });
-    if (outline) map!.addLayer({ id: `${id}-outline`, type: "line", source: id, paint: { "line-color": fill(), "line-width": 1.5, "line-opacity": outlineOpacity } });
+    if (outline) map!.addLayer({ id: `${id}-outline`, type: "line", source: id, paint: { "line-color": fill(), "line-width": 1.5, "line-opacity": outlineOpacity, ...(outlineDashed ? { "line-dasharray": [3, 2] } : {}) } });
   });
   useVisibility(ids, visible);
   useEffect(() => {
