@@ -1,0 +1,126 @@
+/*
+ * GraySilk design tokens · palette "Platform Edge" · v0.1
+ * Primitives never change. Semantic tokens switch with data-gs-theme:
+ *   dark (default, preferred) · light · system (follows the OS)
+ */
+
+:root {
+  /* ---- primitives: brand palette ---- */
+  --gs-graphite: #1b1b1e;
+  --gs-chalk: #edede9;
+  --gs-paper: #dadad5;
+  --gs-lead: #4a4a52;
+  --gs-yellow: #c98f00;
+  --gs-orange: #ff5a1f;
+
+  /* ---- primitives: derived tones (same hues, for states and light-theme text) ---- */
+  --gs-graphite-1: #232327;
+  --gs-graphite-2: #2b2b30;
+  --gs-graphite-3: #3a3a40;
+  --gs-chalk-dim: #a9a9a4;
+  --gs-white: #ffffff;
+  --gs-stone: #c4c4be;
+  --gs-yellow-deep: #7a5700;
+  --gs-orange-deep: #b33a0f;
+
+  /* ---- type ---- */
+  --gs-font-pixel: "Silkscreen", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gs-font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gs-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --gs-display-size: 64px;  --gs-display-line: 64px;
+  --gs-h1-size: 40px;       --gs-h1-line: 48px;
+  --gs-h2-size: 28px;       --gs-h2-line: 36px;
+  --gs-h3-size: 20px;       --gs-h3-line: 28px;
+  --gs-body-size: 16px;     --gs-body-line: 24px;
+  --gs-small-size: 14px;    --gs-small-line: 20px;
+  --gs-label-size: 12px;    --gs-label-line: 16px;
+  --gs-code-size: 14px;     --gs-code-line: 20px;
+  --gs-label-tracking: 0.14em;
+
+  /* ---- space (8 px rhythm, 4 px half-step) ---- */
+  --gs-space-0-5: 4px;
+  --gs-space-1: 8px;
+  --gs-space-1-5: 12px;
+  --gs-space-2: 16px;
+  --gs-space-3: 24px;
+  --gs-space-4: 32px;
+  --gs-space-6: 48px;
+  --gs-space-8: 64px;
+
+  /* ---- shape & motion ---- */
+  --gs-radius-control: 4px;   /* UI controls only; brand surfaces stay square */
+  --gs-ledge: 4px;            /* hard "arcade key" shadow under primary buttons */
+  --gs-duration-fast: 90ms;
+  --gs-duration: 160ms;
+  --gs-steps: steps(2, end);  /* pixel motion: stepped, never eased */
+}
+
+/* ---- semantic: dark (default) ---- */
+:root,
+[data-gs-theme="dark"] {
+  --gs-bg: var(--gs-graphite);
+  --gs-surface: var(--gs-graphite-1);
+  --gs-surface-raised: var(--gs-graphite-2);
+  --gs-text: var(--gs-chalk);
+  --gs-text-muted: var(--gs-chalk-dim);
+  --gs-text-accent: var(--gs-yellow);
+  --gs-text-signal: var(--gs-orange);
+  --gs-border: var(--gs-graphite-3);
+  --gs-border-strong: var(--gs-chalk);
+  --gs-hover: rgb(237 237 233 / 8%);
+  --gs-press: rgb(237 237 233 / 14%);
+  --gs-accent: var(--gs-yellow);
+  --gs-accent-ink: var(--gs-graphite);
+  --gs-accent-ledge: var(--gs-yellow-deep);
+  --gs-signal: var(--gs-orange);
+  --gs-signal-ink: var(--gs-graphite);
+  --gs-signal-ledge: var(--gs-orange-deep);
+  --gs-focus: var(--gs-yellow);
+  --gs-stripe: var(--gs-yellow);
+  --gs-stripe-dot: var(--gs-graphite);
+  color-scheme: dark;
+}
+
+/* ---- semantic: light ---- */
+[data-gs-theme="light"] {
+  --gs-bg: var(--gs-chalk);
+  --gs-surface: var(--gs-white);
+  --gs-surface-raised: var(--gs-white);
+  --gs-text: var(--gs-graphite);
+  --gs-text-muted: var(--gs-lead);
+  --gs-text-accent: var(--gs-yellow-deep);
+  --gs-text-signal: var(--gs-orange-deep);
+  --gs-border: var(--gs-stone);
+  --gs-border-strong: var(--gs-graphite);
+  --gs-hover: rgb(27 27 30 / 6%);
+  --gs-press: rgb(27 27 30 / 11%);
+  --gs-accent: var(--gs-yellow);
+  --gs-accent-ink: var(--gs-graphite);
+  --gs-accent-ledge: var(--gs-yellow-deep);
+  --gs-signal: var(--gs-orange);
+  --gs-signal-ink: var(--gs-graphite);
+  --gs-signal-ledge: var(--gs-orange-deep);
+  --gs-focus: var(--gs-graphite);
+  --gs-stripe: var(--gs-yellow);
+  --gs-stripe-dot: var(--gs-graphite);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-gs-theme="system"] {
+    --gs-bg: var(--gs-chalk);
+    --gs-surface: var(--gs-white);
+    --gs-surface-raised: var(--gs-white);
+    --gs-text: var(--gs-graphite);
+    --gs-text-muted: var(--gs-lead);
+    --gs-text-accent: var(--gs-yellow-deep);
+    --gs-text-signal: var(--gs-orange-deep);
+    --gs-border: var(--gs-stone);
+    --gs-border-strong: var(--gs-graphite);
+    --gs-hover: rgb(27 27 30 / 6%);
+    --gs-press: rgb(27 27 30 / 11%);
+    --gs-focus: var(--gs-graphite);
+    color-scheme: light;
+  }
+}

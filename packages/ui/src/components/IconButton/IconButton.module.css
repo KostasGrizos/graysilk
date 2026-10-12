@@ -1,0 +1,12 @@
+.square {
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sm { width: 32px; height: 32px; }
+.md { width: 40px; height: 40px; }
+.lg { width: 48px; height: 48px; }
+
+.icon > svg { width: 18px; height: 18px; }
+.sm .icon > svg { width: 16px; height: 16px; }
+.lg .icon > svg { width: 22px; height: 22px; }

@@ -1,0 +1,3 @@
+/* Optional: loads the three brand faces from Google Fonts.
+   For a fully offline homelab, self-host the same files and replace this import. */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Silkscreen:wght@400;700&display=swap");

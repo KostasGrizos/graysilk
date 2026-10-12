@@ -1,0 +1,28 @@
+@import "./tokens.css";
+
+/* Apply to the app root (or any subtree) to get brand ground, ink and type. */
+.gs-root {
+  background: var(--gs-bg);
+  color: var(--gs-text);
+  font-family: var(--gs-font-sans);
+  font-size: var(--gs-body-size);
+  line-height: var(--gs-body-line);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.gs-root *,
+.gs-root *::before,
+.gs-root *::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-root *,
+  .gs-root *::before,
+  .gs-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
