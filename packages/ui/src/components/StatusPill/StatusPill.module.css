@@ -1,0 +1,28 @@
+.pill {
+  --pill-color: var(--gs-status-unknown);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  color: var(--gs-text);
+  font-family: var(--gs-font-sans);
+  font-size: var(--gs-small-size);
+  line-height: var(--gs-small-line);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.icon { color: var(--pill-color); flex-shrink: 0; }
+.label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+.ok { --pill-color: var(--gs-status-ok); }
+.caution { --pill-color: var(--gs-status-caution); }
+.attention { --pill-color: var(--gs-status-attention); }
+.stop { --pill-color: var(--gs-status-stop); }
+.unknown { --pill-color: var(--gs-status-unknown); }
+
+.solid {
+  padding: 0 8px 0 4px;
+  border: 1px solid color-mix(in srgb, var(--pill-color) 45%, transparent);
+  border-radius: var(--gs-radius-control);
+  background: color-mix(in srgb, var(--pill-color) 12%, transparent);
+}

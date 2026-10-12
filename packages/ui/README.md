@@ -3,7 +3,7 @@
 React components for the GraySilk brand (palette "Platform Edge"). It ships as a **source package**: TypeScript and CSS Modules, compiled by the consuming Vite app. There is no build step here.
 
 - Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
-- Status: **v0.3**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
+- Status: **v0.5**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, `StatusPill`, `LineMap`, loading (`Loader`, `PixelTrain`, `ProgressBar`), charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
 - Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element; `data-gs-theme="system"` follows the OS again inside a pinned area.
 - Borders: `--gs-border` is for dividers and card edges (decorative). Outlines that identify a control (inputs, toggles, checkboxes) use `--gs-border-control`, which keeps 3:1 against every background.
 - Touch: on touch screens (`pointer: coarse`) buttons grow to 44 px (md) and 40 px (sm).
@@ -46,6 +46,11 @@ React components for the GraySilk brand (palette "Platform Edge"). It ships as a
 - Motion is stepped (`steps()`), never eased, and every animation stops under `prefers-reduced-motion`.
 - Brand surfaces (cards) are square. Controls use a 4 px radius.
 - `primary` buttons cast a 4 px ledge below themselves. Leave 4 px of space under them in tight layouts.
+
+## Status and lines
+
+- `StatusPill status="ok|caution|attention|stop|unknown" label="Running"`: a state as an icon, a word and a status colour. The word is always shown.
+- `LineMap lines={[{ id, name, stations: [{ id, name, state, stateLabel, onSelect? }] }]} label="Service lines"`: the brand line map. Station states differ in shape as well as colour: filled = `lit`, blinking = `busy`, thick orange ring = `alert`, thin ring = `unlit`, hairline = `planned`. Each line ends in the yellow terminus. Inside a card, set `--gs-line-ground: var(--gs-surface)` so station rings match the card.
 
 ## Icons
 

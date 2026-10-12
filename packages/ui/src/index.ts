@@ -34,3 +34,8 @@ export { PixelTrain } from "./components/PixelTrain/PixelTrain";
 export type { PixelTrainProps } from "./components/PixelTrain/PixelTrain";
 export { ProgressBar } from "./components/ProgressBar/ProgressBar";
 export type { ProgressBarProps } from "./components/ProgressBar/ProgressBar";
+
+export { StatusPill } from "./components/StatusPill/StatusPill";
+export type { StatusPillProps, Status } from "./components/StatusPill/StatusPill";
+export { LineMap } from "./components/LineMap/LineMap";
+export type { LineMapProps, Line, LineStation, StationState } from "./components/LineMap/LineMap";

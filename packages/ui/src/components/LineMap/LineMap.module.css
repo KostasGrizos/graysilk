@@ -1,0 +1,122 @@
+/* --gs-line-ground: the colour behind the map (bg by default; set it to the card colour inside cards). */
+.map { --ground: var(--gs-line-ground, var(--gs-bg)); color: var(--gs-text); }
+.lines {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: var(--gs-space-3) var(--gs-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: minmax(96px, 128px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gs-space-2);
+}
+.name {
+  padding-top: 4px;
+  font-family: var(--gs-font-mono);
+  font-size: var(--gs-label-size);
+  line-height: var(--gs-label-line);
+  font-weight: 600;
+  letter-spacing: var(--gs-label-tracking);
+  text-transform: uppercase;
+  color: var(--gs-text-muted);
+}
+
+/* The track is drawn behind the stations: one 8 px line from the first station to the terminus. */
+.track {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gs-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.track::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 8px;
+  background: var(--gs-border-strong);
+}
+
+.stop { position: relative; z-index: 1; min-width: 72px; max-width: 120px; }
+.target {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: default;
+}
+button.target, a.target { cursor: pointer; }
+button.target:focus-visible, a.target:focus-visible {
+  outline: 2px solid var(--gs-focus);
+  outline-offset: 4px;
+}
+
+/* Station squares: 24 px with a 4 px ring in the ground colour so they sit on top of the line. */
+.station {
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border: 4px solid var(--ground);
+  outline: 0;
+  background: var(--gs-unlit);
+}
+/* Shapes as well as colours: filled = lit, thin ring = off, thick orange ring = alert, hairline = planned. */
+.lit { background: var(--gs-signal); }
+.unlit { background: var(--ground); box-shadow: inset 0 0 0 2px var(--gs-border-control); }
+.busy { background: var(--gs-signal); animation: gs-blink 600ms steps(1, end) infinite; }
+.alert { background: var(--ground); box-shadow: inset 0 0 0 5px var(--gs-status-attention); }
+.planned { background: var(--ground); box-shadow: inset 0 0 0 1px var(--gs-border-control); }
+@keyframes gs-blink { 50% { background: var(--ground); box-shadow: inset 0 0 0 2px var(--gs-signal); } }
+
+.stationName {
+  font-size: var(--gs-small-size);
+  line-height: var(--gs-small-line);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+button.target:hover .stationName, a.target:hover .stationName { text-decoration: underline; text-underline-offset: 3px; }
+
+.terminus {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  border: 4px solid var(--ground);
+  background: var(--gs-accent);
+  flex-shrink: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .line { grid-template-columns: 1fr; gap: var(--gs-space-1); }
+  .name { padding-top: 0; }
+  .track { gap: var(--gs-space-2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .busy { animation: none; }
+}
