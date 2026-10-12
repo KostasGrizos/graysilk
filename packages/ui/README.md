@@ -2,8 +2,8 @@
 
 React components for the GraySilk brand (palette "Platform Edge"). It ships as a **source package**: TypeScript and CSS Modules, compiled by the consuming Vite app. There is no build step here.
 
-- Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
-- Status: **v0.3**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
+- Brand guide: [`branding/BRAND_GUIDE.md`](../../branding/BRAND_GUIDE.md) (logos, icons and exports live in `branding/` at the repo root)
+- Status: **v0.3.1**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
 - Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element.
 
 ## Use it in a Vite app (e.g. apps/dashboard)
