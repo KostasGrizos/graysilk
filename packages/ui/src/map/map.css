@@ -1,0 +1,135 @@
+/* GraySilk map theme: overrides for MapLibre's controls and popups + overlay markers.
+   Uses the semantic tokens, so it follows data-gs-theme set by <MapView>. */
+
+.gs-map {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--gs-border);
+  background: var(--gs-bg);
+  color: var(--gs-text);
+  font-family: var(--gs-font-sans);
+}
+.gs-map-canvas { position: absolute; inset: 0; }
+.gs-map-canvas:focus-visible, .gs-map .maplibregl-canvas:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: -2px; }
+
+/* ---- controls ---- */
+.gs-map-controls {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 4px; background: var(--gs-surface); border: 1px solid var(--gs-border);
+  box-shadow: 4px 4px 0 var(--gs-border);
+}
+.gs-map-controls button { border-color: transparent; }
+
+.gs-map .maplibregl-ctrl-bottom-right { display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 4px; padding: 0 8px 8px 0; }
+.gs-map .maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin: 0; }
+.gs-map .maplibregl-ctrl-attrib {
+  background: var(--gs-surface); color: var(--gs-text-muted);
+  font-family: var(--gs-font-mono); font-size: 10px; line-height: 16px;
+  border: 1px solid var(--gs-border); border-radius: 0; padding: 2px 6px;
+}
+.gs-map .maplibregl-ctrl-attrib a { color: var(--gs-text); }
+.gs-map .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 24px; }
+.gs-map .maplibregl-ctrl-attrib-button { filter: var(--gs-attrib-filter, none); }
+.gs-map[data-gs-theme="dark"] { --gs-attrib-filter: invert(1); }
+.gs-map .maplibregl-ctrl-scale {
+  background: color-mix(in oklab, var(--gs-surface) 85%, transparent);
+  color: var(--gs-text); border: 2px solid var(--gs-text); border-top: 0; border-radius: 0;
+  font-family: var(--gs-font-mono); font-size: 10px; padding: 0 4px;
+}
+
+/* ---- popup: a brand card with a hard pixel shadow ---- */
+.gs-popup .maplibregl-popup-content {
+  background: var(--gs-surface-raised); color: var(--gs-text);
+  border: 1px solid var(--gs-border-strong); border-radius: 0;
+  box-shadow: 4px 4px 0 var(--gs-border);
+  padding: 14px 16px; font-family: var(--gs-font-sans); font-size: var(--gs-small-size); line-height: var(--gs-small-line);
+}
+.gs-popup .maplibregl-popup-tip { display: none; }
+.gs-popup .maplibregl-popup-close-button {
+  width: 28px; height: 28px; font-size: 18px; line-height: 1; color: var(--gs-text);
+  border-radius: var(--gs-radius-control); right: 4px; top: 4px;
+}
+.gs-popup .maplibregl-popup-close-button:hover { background: var(--gs-hover); }
+.gs-popup .maplibregl-popup-close-button:focus-visible { outline: 2px solid var(--gs-focus); }
+
+/* ---- stations: pixel squares, labels in Plex Sans with a ground halo ---- */
+.gs-station { display: flex; align-items: center; gap: 6px; pointer-events: none; }
+.gs-station-dot {
+  pointer-events: auto; cursor: pointer; flex-shrink: 0;
+  width: 14px; height: 14px; padding: 0; border: 3px solid var(--line, var(--gs-text)); border-radius: 0;
+  background: var(--gs-bg);
+}
+.gs-station[data-kind="interchange"] .gs-station-dot { width: 18px; height: 18px; border-color: var(--gs-text); border-width: 4px; }
+.gs-station[data-kind="terminus"] .gs-station-dot { background: var(--gs-yellow); border-color: var(--gs-text); }
+.gs-station[data-planned] .gs-station-dot { border-style: dashed; background: transparent; }
+.gs-station[data-selected] .gs-station-dot,
+.gs-station-dot:hover { box-shadow: 0 0 0 3px var(--gs-bg), 0 0 0 5px var(--gs-text); }
+.gs-station-dot:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: 3px; }
+.gs-station-label {
+  display: none; white-space: nowrap;
+  font-size: 12px; line-height: 16px; font-weight: 600; color: var(--gs-text);
+  text-shadow: 0 0 2px var(--gs-bg), 0 0 2px var(--gs-bg), 0 0 3px var(--gs-bg), 1px 1px 0 var(--gs-bg), -1px -1px 0 var(--gs-bg);
+}
+.gs-map[data-labels] .gs-station-label,
+.gs-station[data-kind="terminus"] .gs-station-label,
+.gs-station[data-selected] .gs-station-label,
+.gs-station:has(.gs-station-dot:hover) .gs-station-label,
+.gs-station:has(.gs-station-dot:focus-visible) .gs-station-label { display: block; }
+
+/* ---- pins: square with a pixel pointer, 24 px icon ---- */
+.gs-pin {
+  position: relative; display: grid; place-items: center;
+  width: 36px; height: 36px; margin-bottom: 8px; padding: 0; cursor: pointer;
+  background: var(--gs-surface-raised); color: var(--gs-text);
+  border: 2px solid var(--gs-text); border-radius: 0;
+  box-shadow: inset 0 -4px 0 var(--pin, var(--gs-accent));
+}
+.gs-pin::after {
+  content: ""; position: absolute; left: 50%; bottom: -10px; width: 8px; height: 8px; margin-left: -4px;
+  background: var(--gs-text);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 75% 50%, 75% 100%, 25% 100%, 25% 50%, 0 50%);
+}
+.gs-pin[data-selected], .gs-pin:hover { background: var(--pin, var(--gs-accent)); color: var(--gs-graphite); }
+.gs-pin:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: 3px; }
+.gs-pin svg { shape-rendering: crispEdges; }
+
+/* ---- vehicles: the brand's pixel train ---- */
+.gs-vehicle { width: 32px; height: 14px; filter: drop-shadow(1px 1px 0 var(--gs-bg)) drop-shadow(-1px -1px 0 var(--gs-bg)); }
+.gs-vehicle[data-flip] svg { transform: scaleX(-1); }
+.gs-vehicle .t-a { fill: var(--vehicle, var(--gs-text)); }
+.gs-vehicle .t-b { fill: var(--gs-yellow); }
+.gs-vehicle .t-d { fill: var(--gs-text); }
+
+/* ---- legend ---- */
+.gs-map-legend {
+  position: absolute; left: 12px; bottom: 12px; z-index: 2; max-width: min(260px, calc(100% - 24px));
+  background: var(--gs-surface); border: 1px solid var(--gs-border); box-shadow: 4px 4px 0 var(--gs-border);
+  padding: 10px 12px;
+}
+.gs-map-legend-title {
+  margin: 0 0 6px; font-family: var(--gs-font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--gs-text-muted);
+}
+.gs-map-legend ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.gs-map-legend button, .gs-map-legend-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 28px; padding: 2px 4px;
+  background: none; border: 0; border-radius: var(--gs-radius-control); color: var(--gs-text);
+  font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+}
+.gs-map-legend-row { cursor: default; }
+.gs-map-legend button:hover { background: var(--gs-hover); }
+.gs-map-legend button:focus-visible { outline: 2px solid var(--gs-focus); }
+.gs-map-legend button[aria-pressed="false"] { color: var(--gs-text-muted); text-decoration: line-through; }
+.gs-map-legend button[aria-pressed="false"] .gs-key { opacity: 0.3; }
+.gs-key { flex-shrink: 0; width: 20px; display: inline-block; }
+.gs-key-line { height: 4px; background: var(--key); }
+.gs-key-planned { height: 4px; background: repeating-linear-gradient(90deg, var(--key) 0 6px, transparent 6px 10px); }
+.gs-key-area { height: 14px; background: color-mix(in oklab, var(--key) 18%, transparent); border: 1.5px solid var(--key); }
+.gs-key-station { width: 12px; height: 12px; margin: 0 4px; border: 3px solid var(--key); background: var(--gs-bg); }
+.gs-key-point { width: 14px; height: 14px; margin: 0 3px; border: 2px solid var(--gs-text); box-shadow: inset 0 -3px 0 var(--key); }
+.gs-key-vehicle { height: 8px; background: var(--key); box-shadow: inset 0 -2px 0 var(--gs-yellow); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-map * { transition: none !important; animation: none !important; }
+}

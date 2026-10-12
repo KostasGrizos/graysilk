@@ -9,6 +9,7 @@ import {
   type IconComponent,
 } from "../src";
 import { COMPARISON } from "./iconComparison";
+import { MapDemo } from "./MapDemo";
 
 /* ---------- the 16 × 16 mark, drawn from the brand bitmap ---------- */
 const MARK = [
@@ -128,6 +129,7 @@ const NAV = [
   ["card", "Card"],
   ["data-colour", "Data colour"],
   ["charts", "Charts"],
+  ["map", "Map"],
 ];
 
 /* ---------- icons ---------- */
@@ -203,7 +205,7 @@ export function App() {
           <Mark size={32} />
           <div>
             <div className="pg-brand-name">GraySilk UI</div>
-            <div className="pg-brand-meta">@graysilk/ui · v0.2 · Foundations, icons &amp; charts</div>
+            <div className="pg-brand-meta">@graysilk/ui · v0.3 · Foundations, icons, charts &amp; maps</div>
           </div>
         </div>
         <nav className="pg-nav" aria-label="Components">
@@ -522,11 +524,19 @@ export function App() {
             )}
           </Specimen>
         </Section>
+        <Section
+          id="map"
+          title="Map"
+          lead="Live OpenStreetMap under your own layers. The OSM tiles are recoloured on the GPU (greyscale for Chalk, inverted grey for Night) so the overlays carry all the colour. Examples: metro lines and stations, a planned extension, 500 m walking catchments, places with cards, and moving trains. Click a station or a pin; use the legend to toggle layers."
+          usage={`import { MapView, LineLayer, StationLayer } from "@graysilk/ui/map";\n<MapView center={[22.95, 40.61]} zoom={13} label="Metro map">\n  <LineLayer id="l1" data={line1} color={6} />\n  <StationLayer stations={stations} color={6} onSelect={open} />\n</MapView>`}
+        >
+          <MapDemo />
+        </Section>
       </main>
 
       <footer className="pg-footer">
         <span>GraySilk UI · packages/ui · branch ui-foundations</span>
-        <span>Next: LineMap, StatusPill, PixelTrain · then OSM map themes</span>
+        <span>Map data © OpenStreetMap contributors · example station positions are approximate</span>
       </footer>
     </div>
   );

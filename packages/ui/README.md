@@ -3,7 +3,7 @@
 React components for the GraySilk brand (palette "Platform Edge"). It ships as a **source package**: TypeScript and CSS Modules, compiled by the consuming Vite app. There is no build step here.
 
 - Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
-- Status: **v0.2**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, and charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`).
+- Status: **v0.3**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
 - Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element.
 
 ## Use it in a Vite app (e.g. apps/dashboard)
@@ -63,6 +63,31 @@ import { Server } from "pixelarticons/react/Server.js";
 - Diverging: lapis ↔ `--gs-div-mid` ↔ signal.
 - Status `--gs-status-{ok|caution|attention|stop|unknown}`: railway signal aspects, always shown with an icon and a word, never used for series.
 - Charts: thin 2 px lines, square bar ends, hairline grid, legend for 2+ series, a crosshair you can drive with the arrow keys, and a table view on every line chart. One y-axis only.
+
+## Maps (`@graysilk/ui/map`)
+
+An interactive OpenStreetMap in the brand, with your own layers on top. It needs `maplibre-gl` (optional peer dependency) and is a separate entry, so apps without maps don't load it.
+
+```tsx
+import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, VehicleLayer, MapLegend, circle } from "@graysilk/ui/map";
+
+<MapView center={[22.95, 40.61]} zoom={12} label="Thessaloniki metro">   {/* theme="system" | "chalk" | "night" */}
+  <AreaLayer id="walk" data={catchments} color={6} fillOpacity={0.05} />
+  <LineLayer id="l1" data={line1} color={6} width={6} />
+  <LineLayer id="l2" data={line2} color={1} dashed />                       {/* planned */}
+  <StationLayer stations={stations} color={6} onSelect={setStation} />
+  <PointLayer points={places} onSelect={setPlace} />
+  <VehicleLayer vehicles={live} />
+  <MapPopup lngLat={station?.lngLat ?? null} onClose={close}>…any React…</MapPopup>
+  <MapLegend entries={legend} onToggle={toggle} />
+</MapView>
+```
+
+- Basemap: standard OSM raster tiles, recoloured on the GPU. Chalk is greyscale with lifted blacks; Night is greyscale and inverted (`raster-brightness-min/max` swapped). Overlays carry all the colour. Pass `basemap={…}` for another tile server. For heavy traffic, use your own tiles (OSM tile policy).
+- Colours: `color` takes a data slot 1–8 (resolved per theme) or a hex. Casings use the theme ground.
+- Stations: focusable pixel squares (buttons with labels in Plex Sans). Interchange = bigger square, terminus = yellow, planned = dashed. Labels appear from `labelZoom` or on hover/focus.
+- Points: square pins with a 24 px Pixelarticons icon. Vehicles: the brand pixel train; feed positions and it moves in steps.
+- `useMap()` gives the MapLibre map for custom layers.
 
 ## Scripts
 
