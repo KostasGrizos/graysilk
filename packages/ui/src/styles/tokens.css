@@ -1,5 +1,5 @@
 /*
- * GraySilk design tokens · palette "Platform Edge" · v0.2
+ * GraySilk design tokens · palette "Platform Edge" · v0.4
  * Primitives never change. Semantic tokens follow the OS by default (system);
  * pin a subtree with data-gs-theme="dark" | "light" (or "system" to reset).
  */
@@ -69,9 +69,10 @@
   --gs-steps: steps(2, end);  /* pixel motion: stepped, never eased */
 }
 
-/* ---- semantic: dark ---- */
+/* ---- semantic: dark (also the base for "system", which switches to light below when the OS is light) ---- */
 :root,
-[data-gs-theme="dark"] {
+[data-gs-theme="dark"],
+[data-gs-theme="system"] {
   --gs-bg: var(--gs-graphite);
   --gs-surface: var(--gs-graphite-1);
   --gs-surface-raised: var(--gs-graphite-2);
@@ -79,7 +80,8 @@
   --gs-text-muted: var(--gs-chalk-dim);
   --gs-text-accent: var(--gs-yellow);
   --gs-text-signal: var(--gs-orange);
-  --gs-border: var(--gs-graphite-3);
+  --gs-border: var(--gs-graphite-3);          /* dividers, card edges: decorative, low contrast */
+  --gs-border-control: #76767e;                /* outlines that identify a control (inputs, toggles): ≥ 3:1 on bg and surfaces */
   --gs-unlit: var(--gs-lead); /* unlit stations in loaders */
   --gs-border-strong: var(--gs-chalk);
   --gs-hover: rgb(237 237 233 / 8%);
@@ -126,6 +128,7 @@
   --gs-text-accent: var(--gs-yellow-deep);
   --gs-text-signal: var(--gs-orange-deep);
   --gs-border: var(--gs-stone);
+  --gs-border-control: #85857f;
   --gs-unlit: var(--gs-stone);
   --gs-border-strong: var(--gs-graphite);
   --gs-hover: rgb(27 27 30 / 6%);
@@ -158,6 +161,7 @@
     --gs-text-accent: var(--gs-yellow-deep);
     --gs-text-signal: var(--gs-orange-deep);
     --gs-border: var(--gs-stone);
+    --gs-border-control: #85857f;
     --gs-unlit: var(--gs-stone);
     --gs-border-strong: var(--gs-graphite);
     --gs-hover: rgb(27 27 30 / 6%);

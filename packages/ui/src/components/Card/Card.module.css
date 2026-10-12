@@ -61,7 +61,7 @@
   transition:
     transform var(--gs-duration-fast) var(--gs-steps),
     box-shadow var(--gs-duration-fast) var(--gs-steps),
-    border-color var(--gs-duration) ease;
+    border-color var(--gs-duration-fast) var(--gs-steps);
 }
 .interactive:hover {
   border-color: var(--gs-border-strong);

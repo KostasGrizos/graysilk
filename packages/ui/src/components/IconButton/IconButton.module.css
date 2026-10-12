@@ -7,5 +7,11 @@
 .md { width: 40px; height: 40px; }
 .lg { width: 48px; height: 48px; }
 
+/* touch screens: bigger targets (44 px default), desktop keeps its density */
+@media (pointer: coarse) {
+  .sm { width: 40px; height: 40px; }
+  .md { width: 44px; height: 44px; }
+}
+
 /* Pixelarticons sit on a 24 px grid: 24 px in every size keeps them crisp. */
 .icon > svg { width: var(--gs-icon); height: var(--gs-icon); shape-rendering: crispEdges; }

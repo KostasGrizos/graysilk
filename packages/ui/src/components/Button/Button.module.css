@@ -14,8 +14,8 @@
   transition:
     transform var(--gs-duration-fast) var(--gs-steps),
     box-shadow var(--gs-duration-fast) var(--gs-steps),
-    background-color var(--gs-duration) ease,
-    border-color var(--gs-duration) ease;
+    background-color var(--gs-duration-fast) var(--gs-steps),
+    border-color var(--gs-duration-fast) var(--gs-steps);
 }
 
 .button:focus-visible {
@@ -39,6 +39,12 @@
 .sm { min-height: 32px; padding: 0 var(--gs-space-1-5); font-size: var(--gs-small-size); }
 .md { min-height: 40px; padding: 0 var(--gs-space-2); font-size: var(--gs-small-size); }
 .lg { min-height: 48px; padding: 0 var(--gs-space-3); font-size: var(--gs-body-size); }
+
+/* touch screens: bigger targets (44 px default), desktop keeps its density */
+@media (pointer: coarse) {
+  .sm { min-height: 40px; }
+  .md { min-height: 44px; }
+}
 
 .fullWidth { width: 100%; }
 

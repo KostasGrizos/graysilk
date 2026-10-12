@@ -76,7 +76,8 @@ def write_svg(grid, path, title):
 def write_pdf(grid, path, title, cell_pt=8):
     from reportlab.pdfgen import canvas
     h, w = len(grid), len(grid[0])
-    c = canvas.Canvas(mk(path), pagesize=(w * cell_pt, h * cell_pt))
+    # invariant=1: no creation date or random ID, so the same artwork gives byte-identical PDFs
+    c = canvas.Canvas(mk(path), pagesize=(w * cell_pt, h * cell_pt), invariant=1)
     c.setTitle(title); c.setAuthor("GraySilk")
     for x, y, n, col in runs(grid):
         r, g, b, _ = rgb(col)
@@ -138,11 +139,45 @@ for s in (16, 32, 48):
 raster(TILE, 3).save(mk(f"{OUT}/icons/favicon/favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)])
 SQ = compose(18, 18, [(1, 1, layer(MARK, C))], bg=G)
 raster(SQ, 10).save(mk(f"{OUT}/icons/favicon/apple-touch-icon.png"))
-for s in (192, 512):
-    raster(SQ, 32).resize((s, s), Image.NEAREST).save(mk(f"{OUT}/icons/favicon/icon-{s}.png"))
-open(mk(f"{OUT}/icons/favicon/site.webmanifest"), "w").write(
-    '{"name":"GraySilk Homelab","short_name":"GraySilk","icons":[{"src":"/icon-192.png","sizes":"192x192","type":"image/png"},'
-    '{"src":"/icon-512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#1B1B1E","background_color":"#1B1B1E","display":"standalone"}\n')
+
+
+def square_icon(size, cells, cell, bg=G):
+    """The mark on a Graphite square, drawn at a whole-number cell size and centred (no resampling)."""
+    img = Image.new("RGBA", (size, size), rgb(bg))
+    art = raster(cells, cell)
+    img.alpha_composite(art, ((size - art.width) // 2, (size - art.height) // 2))
+    return img
+
+
+# "any" icons: the 18-cell tile (mark + 1-cell margin), whole-number cells
+square_icon(192, SQ, 10).save(mk(f"{OUT}/icons/favicon/icon-192.png"))
+square_icon(512, SQ, 28).save(mk(f"{OUT}/icons/favicon/icon-512.png"))
+# "maskable" icons: Android crops these to a circle or squircle. Everything that matters must sit
+# inside the central circle 80% across, so the mark's corners stay within it (cell 7 / 20 px).
+MASK = compose(16, 16, [(0, 0, layer(MARK, C))])
+square_icon(192, MASK, 7).save(mk(f"{OUT}/icons/favicon/icon-maskable-192.png"))
+square_icon(512, MASK, 20).save(mk(f"{OUT}/icons/favicon/icon-maskable-512.png"))
+
+MANIFEST = {
+    "id": "/",
+    "name": "GraySilk Homelab",
+    "short_name": "GraySilk",
+    "description": "Status and controls for the GraySilk homelab.",
+    "lang": "en",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "theme_color": G,
+    "background_color": G,
+    "icons": [
+        {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+        {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+        {"src": "/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+        {"src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    ],
+}
+import json
+open(mk(f"{OUT}/icons/favicon/site.webmanifest"), "w").write(json.dumps(MANIFEST, indent=2) + "\n")
 write_svg(TILE, f"{OUT}/icons/dashboard/brand-mark.svg", "GraySilk")
 
 

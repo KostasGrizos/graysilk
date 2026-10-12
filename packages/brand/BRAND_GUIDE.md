@@ -68,6 +68,8 @@ Mostly gray, like the name. Yellow is the safety line on the platform edge; oran
 
 - **OK for text:** Graphite/Chalk 14.6 · Graphite/Paper 12.2 · Lead/Chalk 7.5 · Lead/Paper 6.3 · Yellow/Graphite 6.1 · Orange/Graphite 5.5.
 - **Graphics only, never text:** Yellow/Chalk 2.4 · Orange/Chalk 2.7 · Lead/Graphite 2.0.
+- **Accent text on light:** on light backgrounds, yellow and orange text use the deep tones, Dark yellow `#7A5700` and Dark orange `#B33A0F`. Use them only on Chalk or white (Dark orange: 5.1 on Chalk, 6.0 on white). **Never on Paper:** Dark orange on Paper is 4.2, below the 4.5 needed for text, and Dark yellow is only 4.7. On Paper, set text in Graphite or Lead and carry the accent with a yellow or orange shape instead.
+- **Borders:** dividers and card edges may be faint (Stone `#C4C4BE` on light, Graphite-3 `#3A3A40` on dark; decorative only). An outline that is the only thing showing where a control is (an input, toggle or checkbox) needs 3:1 against what is around it: use the control border, `#85857F` on light (3.7 on white, 3.2 on Chalk) and `#76767E` on dark (3.1 to 3.8 on the dark surfaces). Token: `--gs-border-control`.
 
 ## 5. Typography
 

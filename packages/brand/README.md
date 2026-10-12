@@ -17,7 +17,7 @@ branding/
 │   ├── png/    transparent, whole-number pixel sizes
 │   └── webp/   lossless, same sizes as png
 ├── icons/
-│   ├── favicon/     favicon.svg/.ico, 16/32/48 png, apple-touch-icon, icon-192/512, site.webmanifest
+│   ├── favicon/     favicon.svg/.ico, 16/32/48 png, apple-touch-icon, icon-192/512, maskable 192/512, site.webmanifest
 │   ├── app-icon/    GraySilk.icns + png 16 to 1024 (macOS launcher)
 │   └── dashboard/   brand-mark.svg (32 px sidebar tile)
 ├── social/     README banners, GitHub social preview, avatar (png + webp)
@@ -79,6 +79,9 @@ Edit `source/bitmaps.py` to change a pixel; every file follows.
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1B1B1E">
   ```
+
+  Copy everything in `icons/favicon/` into the dashboard's `public/`. The manifest has `id`, `start_url` and `scope` set to `/`, plus normal and **maskable** icons (`icon-maskable-*.png`: extra padding so round home-screen masks don't clip the G).
 - **Launcher:** use `icons/app-icon/GraySilk.icns` as the app icon of `Start Homelab`.
 - **UI components and maps:** React components, charts and the interactive OSM map theme live in `@graysilk/ui` (`packages/ui` in the homelab repo; maps under `@graysilk/ui/map`).

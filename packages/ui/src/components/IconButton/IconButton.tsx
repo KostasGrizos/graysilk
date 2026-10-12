@@ -8,7 +8,7 @@ import type { ButtonSize, ButtonVariant } from "../Button/Button";
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "aria-label"> {
   /** Accessible name, also shown as the tooltip. Required: an icon alone says nothing to a screen reader. */
   label: string;
-  /** The icon, e.g. a lucide-react icon. */
+  /** The icon, a Pixelarticons component (24 px grid). */
   icon: ReactNode;
   variant?: ButtonVariant;
   /** sm 32 · md 40 · lg 48 px square */

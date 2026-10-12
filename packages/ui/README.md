@@ -4,7 +4,9 @@ React components for the GraySilk brand (palette "Platform Edge"). It ships as a
 
 - Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
 - Status: **v0.3**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
-- Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element.
+- Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element; `data-gs-theme="system"` follows the OS again inside a pinned area.
+- Borders: `--gs-border` is for dividers and card edges (decorative). Outlines that identify a control (inputs, toggles, checkboxes) use `--gs-border-control`, which keeps 3:1 against every background.
+- Touch: on touch screens (`pointer: coarse`) buttons grow to 44 px (md) and 40 px (sm).
 
 ## Use it in a Vite app (e.g. apps/dashboard)
 
@@ -20,7 +22,7 @@ React components for the GraySilk brand (palette "Platform Edge"). It ships as a
    "paths": { "@graysilk/ui": ["../../packages/ui/src"] }
    ```
 
-2. Load styles once (fonts are optional; self-host them for an offline homelab):
+2. Load styles once. `fonts.css` bundles the three brand faces from npm (`@fontsource`, OFL), so they are served by your own app, never fetched from Google, and work offline. Run `npm install` in `packages/ui` so the app build can find them.
 
    ```ts
    import "../../packages/ui/src/styles/fonts.css";

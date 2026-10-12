@@ -13,7 +13,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   /** Shows the station loader, disables the button and sets aria-busy. The label stays for screen readers. */
   loading?: boolean;
-  /** Icon before the label (e.g. a lucide-react icon). */
+  /** Icon before the label (a Pixelarticons component, 24 px). */
   iconStart?: ReactNode;
   /** Icon after the label. */
   iconEnd?: ReactNode;
