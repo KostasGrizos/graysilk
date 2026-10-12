@@ -27,3 +27,10 @@ export type { MeterProps, MeterStatus } from "./components/charts/Meter";
 export { StatTile } from "./components/charts/StatTile";
 export type { StatTileProps } from "./components/charts/StatTile";
 export { formatCompact, niceTicks, seriesColor } from "./components/charts/shared";
+
+export { Loader } from "./components/Loader/Loader";
+export type { LoaderProps, LoaderVariant, LoaderSize } from "./components/Loader/Loader";
+export { PixelTrain } from "./components/PixelTrain/PixelTrain";
+export type { PixelTrainProps } from "./components/PixelTrain/PixelTrain";
+export { ProgressBar } from "./components/ProgressBar/ProgressBar";
+export type { ProgressBarProps } from "./components/ProgressBar/ProgressBar";

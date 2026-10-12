@@ -1,0 +1,5 @@
+.train { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+.left { transform: scaleX(-1); }
+.body { fill: var(--gs-train, var(--gs-text)); }
+.stripe { fill: var(--gs-yellow); }
+.wheels { fill: var(--gs-train-wheels, var(--gs-text)); }

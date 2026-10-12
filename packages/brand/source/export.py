@@ -197,3 +197,7 @@ banner(1280, 320, 5, True, "homelab-banner-1280x320")
 banner(1280, 640, 8, False, "github-social-1280x640")
 raster(compose(20, 20, [(2, 2, layer(MARK, C))], bg=G), 32).save(mk(f"{OUT}/social/avatar-640.png"))
 print("exported to", OUT)
+
+# ---------- loading animations (see animate.py) ----------
+import animate
+animate.main(OUT)

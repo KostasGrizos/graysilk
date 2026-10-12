@@ -238,3 +238,7 @@ body {
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--gs-text);
 }
 .pg-line-chip::before { content: ""; width: 12px; height: 12px; background: var(--c); }
+.pg-loaders { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 32px; }
+.pg-loaders figure { margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.pg-loaders figcaption { font-family: var(--gs-font-mono); font-size: 11px; color: var(--gs-text-muted); }
+.pg-progress { display: flex; flex-direction: column; gap: 20px; max-width: 520px; }

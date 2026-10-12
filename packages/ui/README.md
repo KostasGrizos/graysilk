@@ -2,8 +2,8 @@
 
 React components for the GraySilk brand (palette "Platform Edge"). It ships as a **source package**: TypeScript and CSS Modules, compiled by the consuming Vite app. There is no build step here.
 
-- Brand guide: [`branding/BRAND_GUIDE.md`](../../branding/BRAND_GUIDE.md) (logos, icons and exports live in `branding/` at the repo root)
-- Status: **v0.3.1**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
+- Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
+- Status: **v0.3**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
 - Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element.
 
 ## Use it in a Vite app (e.g. apps/dashboard)
@@ -63,6 +63,25 @@ import { Server } from "pixelarticons/react/Server.js";
 - Diverging: lapis ↔ `--gs-div-mid` ↔ signal.
 - Status `--gs-status-{ok|caution|attention|stop|unknown}`: railway signal aspects, always shown with an icon and a word, never used for series.
 - Charts: thin 2 px lines, square bar ends, hairline grid, legend for 2+ series, a crosshair you can drive with the arrow keys, and a table view on every line chart. One y-axis only.
+
+## Loading
+
+```tsx
+import { Loader, PixelTrain, ProgressBar } from "@graysilk/ui";
+
+<Loader />                                         {/* stations: inline waits */}
+<Loader variant="train" label="Loading photos" />  {/* panels, empty states */}
+<Loader variant="mark" size="lg" />                {/* app start, splash */}
+<PixelTrain scale={3} direction="left" color="var(--gs-series-1)" />
+<ProgressBar label="Restoring Immich" value={42} />
+<ProgressBar label="Uploading" value={1.2} max={4} valueText="1.2 of 4 GB" />
+<ProgressBar label="Checking backups" />             {/* no value: the train runs along the line */}
+```
+
+- Motion is stepped (whole cells, never smooth) and stops on a still frame under `prefers-reduced-motion`.
+- `Loader` is a polite `role="status"`; `label` is read out (and shown with `showLabel`). Sizes are whole-pixel scales: sm 2×, md 3×, lg 4×.
+- `ProgressBar` is a real `progressbar` with value text; it fills one block at a time (`segments`, default 24). For levels with status (disk, CPU) use `Meter`.
+- The same three loaders exist as files (GIF, animated WebP, SVG) in `branding/loading/` for places without React: READMEs, emails, the macOS launcher, static pages.
 
 ## Maps (`@graysilk/ui/map`)
 

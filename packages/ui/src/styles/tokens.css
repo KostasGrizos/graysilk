@@ -80,6 +80,7 @@
   --gs-text-accent: var(--gs-yellow);
   --gs-text-signal: var(--gs-orange);
   --gs-border: var(--gs-graphite-3);
+  --gs-unlit: var(--gs-lead); /* unlit stations in loaders */
   --gs-border-strong: var(--gs-chalk);
   --gs-hover: rgb(237 237 233 / 8%);
   --gs-press: rgb(237 237 233 / 14%);
@@ -125,6 +126,7 @@
   --gs-text-accent: var(--gs-yellow-deep);
   --gs-text-signal: var(--gs-orange-deep);
   --gs-border: var(--gs-stone);
+  --gs-unlit: var(--gs-stone);
   --gs-border-strong: var(--gs-graphite);
   --gs-hover: rgb(27 27 30 / 6%);
   --gs-press: rgb(27 27 30 / 11%);
@@ -156,6 +158,7 @@
     --gs-text-accent: var(--gs-yellow-deep);
     --gs-text-signal: var(--gs-orange-deep);
     --gs-border: var(--gs-stone);
+    --gs-unlit: var(--gs-stone);
     --gs-border-strong: var(--gs-graphite);
     --gs-hover: rgb(27 27 30 / 6%);
     --gs-press: rgb(27 27 30 / 11%);

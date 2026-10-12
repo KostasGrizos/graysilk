@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { Icon, type IconComponent } from "../components/Icon/Icon";
+import { TRAIN } from "../internal/bitmaps";
 import { useMap } from "./context";
 import { resolveColor, type MapColor } from "./theme";
 
@@ -216,8 +217,6 @@ export interface Vehicle {
   color: MapColor;
 }
 
-const TRAIN = ["...aaaaaaaaaaaa.", "..aaaaaaaaaaaaaa", ".aa..a..a..a..aa", ".aa..a..a..a..aa", ".aaaaaaaaaaaaaaa", ".bbbbbbbbbbbbbba", "..dd.dd....dd.dd"];
-
 function trainSvg(): string {
   const cells = TRAIN.flatMap((row, y) => [...row].map((c, x) => (c === "." ? "" : `<rect x="${x}" y="${y}" width="1" height="1" class="t-${c}"/>`))).join("");
   return `<svg viewBox="0 0 16 7" width="32" height="14" shape-rendering="crispEdges" aria-hidden="true">${cells}</svg>`;
@@ -247,7 +246,8 @@ export function VehicleLayer({ vehicles, visible = true }: { vehicles: Vehicle[]
       item.el.setAttribute("aria-label", v.label);
       item.el.title = v.label;
       item.el.style.setProperty("--vehicle", resolveColor(v.color, theme));
-      item.el.toggleAttribute("data-flip", ((v.bearing ?? 90) + 360) % 360 > 180);
+      // the bitmap faces right (east); mirror it for trains heading west
+      item.el.toggleAttribute("data-flip", ((v.bearing ?? 90) % 360 + 360) % 360 > 180);
       item.el.hidden = !visible;
     }
     items.current.forEach((item, id) => {

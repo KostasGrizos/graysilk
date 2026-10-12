@@ -10,6 +10,7 @@ import {
 } from "../src";
 import { COMPARISON } from "./iconComparison";
 import { MapDemo } from "./MapDemo";
+import { LoaderRow, ProgressDemo, TrainRow } from "./LoadingDemo";
 
 /* ---------- the 16 × 16 mark, drawn from the brand bitmap ---------- */
 const MARK = [
@@ -127,6 +128,7 @@ const NAV = [
   ["icon-button", "IconButton"],
   ["badge", "Badge"],
   ["card", "Card"],
+  ["loading", "Loading"],
   ["data-colour", "Data colour"],
   ["charts", "Charts"],
   ["map", "Map"],
@@ -205,7 +207,7 @@ export function App() {
           <Mark size={32} />
           <div>
             <div className="pg-brand-name">GraySilk UI</div>
-            <div className="pg-brand-meta">@graysilk/ui · v0.3 · Foundations, icons, charts &amp; maps</div>
+            <div className="pg-brand-meta">@graysilk/ui · v0.4 · Foundations, icons, loading, charts &amp; maps</div>
           </div>
         </div>
         <nav className="pg-nav" aria-label="Components">
@@ -447,6 +449,26 @@ export function App() {
         </Section>
 
         <Section
+          id="loading"
+          title="Loading"
+          lead="Three loaders, all moving in whole-pixel steps and holding still when the device asks for reduced motion. Stations for inline waits, the train for panels and empty states, the mark for app start. ProgressBar fills one block at a time; with no value the train runs along the line. The same loaders are exported as GIF, animated WebP and SVG in branding/loading."
+          usage={`import { Loader, PixelTrain, ProgressBar } from "@graysilk/ui";\n<Loader variant="train" label="Loading photos" />\n<ProgressBar label="Restoring" value={42} />\n<ProgressBar label="Checking backups" />   {/* no value: train runs */}`}
+        >
+          <Specimen stack>
+            {() => (
+              <>
+                <Text variant="label" tone="muted">Loader</Text>
+                <LoaderRow />
+                <Text variant="label" tone="muted">PixelTrain · scale 1–4, any colour, either way</Text>
+                <TrainRow />
+                <Text variant="label" tone="muted">ProgressBar</Text>
+                <ProgressDemo />
+              </>
+            )}
+          </Specimen>
+        </Section>
+
+        <Section
           id="data-colour"
           title="Data colour"
           lead="Eight chart colours named like metro lines, in a fixed order that passes colour-blind checks on both themes. Status colours are railway signal aspects and always come with an icon and a word."
@@ -527,8 +549,8 @@ export function App() {
         <Section
           id="map"
           title="Map"
-          lead="Live OpenStreetMap under your own layers. The OSM tiles are recoloured on the GPU (greyscale for Chalk, inverted grey for Night) so the overlays carry all the colour. Examples: metro lines and stations, a planned extension, 500 m walking catchments, places with cards, and moving trains. Click a station or a pin; use the legend to toggle layers."
-          usage={`import { MapView, LineLayer, StationLayer } from "@graysilk/ui/map";\n<MapView center={[22.95, 40.61]} zoom={13} label="Metro map">\n  <LineLayer id="l1" data={line1} color={6} />\n  <StationLayer stations={stations} color={6} onSelect={open} />\n</MapView>`}
+          lead="Live OpenStreetMap under your own layers. The OSM tiles are recoloured on the GPU (greyscale for Chalk, inverted grey for Night) so the overlays carry all the colour. Example: the Thessaloniki Metro with Line 2 sharing Line 1's track, 500 m walking catchments, places with cards, and moving trains. Click a line, a station or a pin; use the legend to toggle layers."
+          usage={`import { MapView, LineLayer, StationLayer, bbox } from "@graysilk/ui/map";\n<MapView bounds={bbox(stationCoords)} label="Metro map">\n  <LineLayer id="l1" data={line1} color={6} onClick={showLine} />\n  <StationLayer stations={stations} color={6} onSelect={open} />\n</MapView>`}
         >
           <MapDemo />
         </Section>
@@ -536,7 +558,7 @@ export function App() {
 
       <footer className="pg-footer">
         <span>GraySilk UI · packages/ui · branch ui-foundations</span>
-        <span>Map data © OpenStreetMap contributors · example station positions are approximate</span>
+        <span>Map data © OpenStreetMap contributors · station positions from Wikipedia</span>
       </footer>
     </div>
   );

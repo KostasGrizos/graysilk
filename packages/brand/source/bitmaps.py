@@ -7,6 +7,7 @@ PAL = {
     "yellow": "#C98F00",
     "orange": "#FF5A1F",
     "lead": "#4A4A52",
+    "stone": "#C4C4BE",   # derived tone: unlit stations on light backgrounds
 }
 
 # 16x16 mark. a = line, b = terminus (yellow), c = station (orange)
@@ -27,6 +28,18 @@ MARK = [
     "....aaaacaaaa...",
     ".....aaaaaaa....",
     "................",
+]
+
+# 16x7 pixel train, nose to the right (mirror it to run left).
+# a = body, b = safety-yellow stripe, d = wheels; dots are windows / empty.
+TRAIN = [
+    ".aaaaaaaaaaaa...",
+    "aaaaaaaaaaaaaa..",
+    "aa..a..a..a..aa.",
+    "aa..a..a..a..aa.",
+    "aaaaaaaaaaaaaaa.",
+    "abbbbbbbbbbbbbb.",
+    "dd.dd....dd.dd..",
 ]
 
 # Custom wordmark glyphs: 2-cell strokes, cap height 10 (rows 0-9),

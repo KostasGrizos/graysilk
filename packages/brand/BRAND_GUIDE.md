@@ -94,8 +94,23 @@ All three typefaces are free on Google Fonts. Sizes follow an 8 px rhythm.
 
 - **Platform stripe:** Safety yellow band with Graphite squares, square-to-gap 1 : 2. Use it full-bleed and horizontal, at the foot of banners, covers and footers.
 - **Line map:** services drawn as stations (orange squares) on an 8 px Chalk line, ending in a yellow terminus. Use it for status pages, READMEs and roadmaps.
-- **Pixel train:** for loading, progress and empty states. It moves in whole-pixel steps, never smoothly.
+- **Pixel train:** for loading, progress and empty states. It moves in whole-pixel steps, never smoothly. Its nose points the way it travels.
 - **Grid and corners:** spacing in multiples of 8 px. Brand surfaces get square or pixel-cut corners. UI controls may use a 4 px radius.
+
+### Loading
+
+Three loaders, each moving one whole cell per frame and holding a still frame when the viewer asks for reduced motion.
+
+| Loader | Looks like | Use for | Timing |
+| --- | --- | --- | --- |
+| Stations | three squares, one lit in Signal orange at a time | inline waits, buttons, small spaces | 300 ms per station |
+| Train | the pixel train running along a line, wrapping round | panels, empty states, long waits | 1 cell per 50 ms (1.6 s loop) |
+| Mark | the logo's three stations lighting up along the G, then holding | app start, splash screens | 250 ms per step, 500 ms hold |
+
+- Unlit stations use the border tone (Stone on light, Lead on dark). Lit = Signal orange; the train's stripe and the mark's terminus stay Safety yellow.
+- Progress: fill in whole blocks of Safety yellow (Signal orange when the result needs attention). When the amount of work is unknown, run the train along a 2 px line instead.
+- Always pair a loader with words for screen readers ("Loading photos"); show them when the wait is longer than a moment.
+- Files: `loading/` (GIF, animated WebP, animated SVG; on-light and on-dark). In React: `Loader`, `PixelTrain`, `ProgressBar` from `@graysilk/ui`.
 
 ## 7. Applications
 

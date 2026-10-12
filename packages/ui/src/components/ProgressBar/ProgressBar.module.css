@@ -1,0 +1,38 @@
+.progress { display: flex; flex-direction: column; gap: 8px; min-width: 0; --fill: var(--gs-accent); }
+.signal { --fill: var(--gs-signal); }
+
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.label { font-size: var(--gs-small-size); line-height: var(--gs-small-line); color: var(--gs-text); }
+.value {
+  font-family: var(--gs-font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--gs-text-muted); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* determinate: a row of pixel blocks, filled one whole block at a time */
+.track {
+  display: grid;
+  grid-template-columns: repeat(var(--segments), 1fr);
+  gap: 2px;
+  height: 8px;
+}
+.block { background: var(--gs-border); }
+.on { background: var(--fill); }
+
+/* indeterminate: the pixel train runs along a 2 px line, in whole steps */
+.indeterminate {
+  display: block; position: relative; height: 16px; overflow: hidden;
+  background: linear-gradient(var(--gs-text), var(--gs-text)) left bottom / 100% 2px no-repeat;
+}
+.runner {
+  position: absolute; left: 0; bottom: 2px; width: 100%; height: 14px;
+  animation: run 2400ms steps(24, end) infinite;
+}
+.runner svg { display: block; }
+@keyframes run {
+  from { transform: translateX(-32px); }
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runner { animation: none; transform: translateX(8px); }
+}

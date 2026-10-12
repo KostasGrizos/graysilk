@@ -21,7 +21,8 @@ branding/
 │   ├── app-icon/    GraySilk.icns + png 16 to 1024 (macOS launcher)
 │   └── dashboard/   brand-mark.svg (32 px sidebar tile)
 ├── social/     README banners, GitHub social preview, avatar (png + webp)
-└── source/     bitmaps.py (the pixel drawings) + export.py (builds all of the above)
+├── loading/    animated loaders: stations, train, mark (gif, webp, svg; on-light / on-dark)
+└── source/     bitmaps.py (the pixel drawings) + export.py (builds all of the above) + animate.py (the loaders)
 ```
 
 ## Logo files
@@ -46,11 +47,24 @@ File name pattern: `graysilk-<variant>-<tone>[-<width>px].<ext>`
 
 Scale only by whole numbers. If you need a size that isn't listed, use the SVG or PDF.
 
+## Loading animations
+
+File name pattern: `graysilk-loader-<stations|train|mark>-<on-light|on-dark>[-<width>px].<ext>`. Backgrounds are transparent; pick the tone for the background it sits on.
+
+| Format | Where | Notes |
+| --- | --- | --- |
+| `gif/` | anywhere: READMEs, email, chat | pixel-sharp, 1-bit transparency |
+| `webp/` | web pages | lossless, smaller |
+| `svg/` | web pages, docs | scalable; CSS animation that stands still under reduced motion |
+
+Sizes: stations 26/39/52 px wide, train 64/96/128 px, mark 32/48/64/128 px (2×, 3×, 4×, 8×). In React use `Loader` from `@graysilk/ui` instead of the files.
+
 ## Regenerate
 
 ```bash
 cd branding   # from the root of the homelab repo
-python3 source/export.py source .        # needs Pillow (with WebP) + reportlab
+python3 source/export.py source .        # needs Pillow (with WebP) + reportlab; also runs animate.py
+python3 source/animate.py source .       # just the loading animations
 ```
 
 Edit `source/bitmaps.py` to change a pixel; every file follows.
