@@ -25,6 +25,15 @@
   text-transform: uppercase;
   color: var(--gs-text-muted);
 }
+.line[style] .name::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  background: var(--line-color);
+  vertical-align: 1px;
+}
 
 /* The track is drawn behind the stations: one 8 px line from the first station to the terminus. */
 .track {
@@ -43,7 +52,7 @@
   left: 8px;
   right: 8px;
   height: 8px;
-  background: var(--gs-border-strong);
+  background: var(--line-color, var(--gs-border-strong));
 }
 
 .stop { position: relative; z-index: 1; min-width: 72px; max-width: 120px; }

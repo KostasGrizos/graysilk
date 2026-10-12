@@ -50,7 +50,7 @@ React components for the GraySilk brand (palette "Platform Edge"). It ships as a
 ## Status and lines
 
 - `StatusPill status="ok|caution|attention|stop|unknown" label="Running"`: a state as an icon, a word and a status colour. The word is always shown.
-- `LineMap lines={[{ id, name, stations: [{ id, name, state, stateLabel, onSelect? }] }]} label="Service lines"`: the brand line map. Station states differ in shape as well as colour: filled = `lit`, blinking = `busy`, thick orange ring = `alert`, thin ring = `unlit`, hairline = `planned`. Each line ends in the yellow terminus. Inside a card, set `--gs-line-ground: var(--gs-surface)` so station rings match the card.
+- `LineMap lines={[{ id, name, stations: [{ id, name, state, stateLabel, onSelect? }] }]} label="Service lines"`: the brand line map. Station states differ in shape as well as colour: filled = `lit`, blinking = `busy`, thick orange ring = `alert`, thin ring = `unlit`, hairline = `planned`. Each line ends in the yellow terminus. Inside a card, set `--gs-line-ground: var(--gs-surface)` so station rings match the card. Optional `color` per line (use a data-palette colour, e.g. `var(--gs-series-3)`) tints its track and adds a swatch before its name; the station states stay the same.
 
 ## Icons
 

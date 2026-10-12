@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/cx";
 import styles from "./LineMap.module.css";
 
@@ -22,6 +22,8 @@ export interface Line {
   name: ReactNode;
   /** Plain-text name for screen readers when `name` is not a string. */
   label?: string;
+  /** Colour of the track, e.g. "var(--gs-series-3)". Defaults to the ink colour. */
+  color?: string;
   stations: LineStation[];
 }
 
@@ -42,7 +44,7 @@ export function LineMap({ lines, label, className, ...rest }: LineMapProps) {
         {lines.map((line) => {
           const lineName = line.label ?? (typeof line.name === "string" ? line.name : line.id);
           return (
-            <li key={line.id} className={styles.line}>
+            <li key={line.id} className={styles.line} style={line.color ? ({ ["--line-color" as string]: line.color } as CSSProperties) : undefined}>
               <span className={styles.name} id={`gs-line-${line.id}`}>{line.name}</span>
               <ol className={styles.track} aria-labelledby={`gs-line-${line.id}`}>
                 {line.stations.map((station) => {
