@@ -33,7 +33,7 @@
   display: inline-flex;
   flex-shrink: 0;
 }
-.icon > svg { width: 1.15em; height: 1.15em; }
+.icon > svg { width: var(--gs-icon); height: var(--gs-icon); shape-rendering: crispEdges; }
 
 /* ---- sizes ---- */
 .sm { min-height: 32px; padding: 0 var(--gs-space-1-5); font-size: var(--gs-small-size); }

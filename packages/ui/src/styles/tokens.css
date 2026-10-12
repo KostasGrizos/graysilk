@@ -1,7 +1,7 @@
 /*
- * GraySilk design tokens · palette "Platform Edge" · v0.1
- * Primitives never change. Semantic tokens switch with data-gs-theme:
- *   dark (default, preferred) · light · system (follows the OS)
+ * GraySilk design tokens · palette "Platform Edge" · v0.2
+ * Primitives never change. Semantic tokens follow the OS by default (system);
+ * pin a subtree with data-gs-theme="dark" | "light" (or "system" to reset).
  */
 
 :root {
@@ -22,6 +22,17 @@
   --gs-stone: #c4c4be;
   --gs-yellow-deep: #7a5700;
   --gs-orange-deep: #b33a0f;
+
+  /* ---- data: sequential ramps (theme-independent; 500 = brand) ---- */
+  --gs-safety-100: #feecce; --gs-safety-200: #f9d59b; --gs-safety-300: #e9bc70;
+  --gs-safety-400: #d9a648; --gs-safety-500: #c98f00; --gs-safety-600: #a67606;
+  --gs-safety-700: #865e00; --gs-safety-800: #694900; --gs-safety-900: #4e3500;
+  --gs-lapis-100: #e6effe; --gs-lapis-200: #c7dcff; --gs-lapis-300: #a3c5fe;
+  --gs-lapis-400: #81b0fe; --gs-lapis-500: #5d99ff; --gs-lapis-600: #3b7be8;
+  --gs-lapis-700: #2460c5; --gs-lapis-800: #174a9f; --gs-lapis-900: #103777;
+  --gs-signal-100: #ffe9e3; --gs-signal-200: #fecec0; --gs-signal-300: #ffad94;
+  --gs-signal-400: #ff8a67; --gs-signal-500: #fe602c; --gs-signal-600: #dc4502;
+  --gs-signal-700: #b13500; --gs-signal-800: #8c2800; --gs-signal-900: #691c00;
 
   /* ---- type ---- */
   --gs-font-pixel: "Silkscreen", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -48,15 +59,17 @@
   --gs-space-6: 48px;
   --gs-space-8: 64px;
 
-  /* ---- shape & motion ---- */
+  /* ---- shape, icons & motion ---- */
   --gs-radius-control: 4px;   /* UI controls only; brand surfaces stay square */
   --gs-ledge: 4px;            /* hard "arcade key" shadow under primary buttons */
+  --gs-icon: 24px;            /* Pixelarticons: 24 px grid, use 24 or 48 only */
+  --gs-icon-lg: 48px;
   --gs-duration-fast: 90ms;
   --gs-duration: 160ms;
   --gs-steps: steps(2, end);  /* pixel motion: stepped, never eased */
 }
 
-/* ---- semantic: dark (default) ---- */
+/* ---- semantic: dark ---- */
 :root,
 [data-gs-theme="dark"] {
   --gs-bg: var(--gs-graphite);
@@ -79,10 +92,30 @@
   --gs-focus: var(--gs-yellow);
   --gs-stripe: var(--gs-yellow);
   --gs-stripe-dot: var(--gs-graphite);
+
+  /* data: categorical "lines" (validated on --gs-surface #232327) */
+  --gs-series-1: #4c8df6; /* Lapis   */
+  --gs-series-2: #ba8400; /* Safety  */
+  --gs-series-3: #e0609f; /* Magenta */
+  --gs-series-4: #7a9a2a; /* Moss    */
+  --gs-series-5: #8f78ec; /* Violet  */
+  --gs-series-6: #ee5219; /* Signal  */
+  --gs-series-7: #2e9bd0; /* Sky     */
+  --gs-series-8: #e0544b; /* Brick   */
+  /* data: status (railway signal aspects; always with icon + label) */
+  --gs-status-ok: #3fae52;
+  --gs-status-caution: #e8a800;
+  --gs-status-attention: #ff5a1f;
+  --gs-status-stop: #e5484d;
+  --gs-status-unknown: #8a8a92;
+  /* data: chrome */
+  --gs-grid: #2f2f35;
+  --gs-axis: #45454c;
+  --gs-div-mid: #3a3a40;
   color-scheme: dark;
 }
 
-/* ---- semantic: light ---- */
+/* ---- semantic: light (explicit, or the OS default) ---- */
 [data-gs-theme="light"] {
   --gs-bg: var(--gs-chalk);
   --gs-surface: var(--gs-white);
@@ -95,19 +128,25 @@
   --gs-border-strong: var(--gs-graphite);
   --gs-hover: rgb(27 27 30 / 6%);
   --gs-press: rgb(27 27 30 / 11%);
-  --gs-accent: var(--gs-yellow);
-  --gs-accent-ink: var(--gs-graphite);
-  --gs-accent-ledge: var(--gs-yellow-deep);
-  --gs-signal: var(--gs-orange);
-  --gs-signal-ink: var(--gs-graphite);
-  --gs-signal-ledge: var(--gs-orange-deep);
   --gs-focus: var(--gs-graphite);
-  --gs-stripe: var(--gs-yellow);
-  --gs-stripe-dot: var(--gs-graphite);
+  --gs-series-1: #2f6fdb;
+  --gs-series-2: #b07c00;
+  --gs-series-3: #d2479b;
+  --gs-series-4: #6c8a1e;
+  --gs-series-5: #7b5ce0;
+  --gs-series-6: #ff5a1f;
+  --gs-series-7: #1c93c9;
+  --gs-series-8: #b4322c;
+  --gs-status-ok: #2e9e44;
+  --gs-status-stop: #d7262e;
+  --gs-grid: #e6e6e1;
+  --gs-axis: #c4c4be;
+  --gs-div-mid: #d9d9d4;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: light) {
+  :root:not([data-gs-theme="dark"]),
   [data-gs-theme="system"] {
     --gs-bg: var(--gs-chalk);
     --gs-surface: var(--gs-white);
@@ -121,6 +160,19 @@
     --gs-hover: rgb(27 27 30 / 6%);
     --gs-press: rgb(27 27 30 / 11%);
     --gs-focus: var(--gs-graphite);
+    --gs-series-1: #2f6fdb;
+    --gs-series-2: #b07c00;
+    --gs-series-3: #d2479b;
+    --gs-series-4: #6c8a1e;
+    --gs-series-5: #7b5ce0;
+    --gs-series-6: #ff5a1f;
+    --gs-series-7: #1c93c9;
+    --gs-series-8: #b4322c;
+    --gs-status-ok: #2e9e44;
+    --gs-status-stop: #d7262e;
+    --gs-grid: #e6e6e1;
+    --gs-axis: #c4c4be;
+    --gs-div-mid: #d9d9d4;
     color-scheme: light;
   }
 }

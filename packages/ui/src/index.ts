@@ -12,3 +12,18 @@ export type { BadgeProps, BadgeVariant } from "./components/Badge/Badge";
 
 export { Card, CardHeader, CardFooter } from "./components/Card/Card";
 export type { CardProps, CardHeaderProps, CardPadding } from "./components/Card/Card";
+
+export { Icon } from "./components/Icon/Icon";
+export type { IconProps, IconComponent } from "./components/Icon/Icon";
+
+export { ChartFrame } from "./components/charts/ChartFrame";
+export type { ChartFrameProps, LegendItem } from "./components/charts/ChartFrame";
+export { LineChart } from "./components/charts/LineChart";
+export type { LineChartProps, LineSeries } from "./components/charts/LineChart";
+export { BarChart } from "./components/charts/BarChart";
+export type { BarChartProps, BarDatum } from "./components/charts/BarChart";
+export { Meter } from "./components/charts/Meter";
+export type { MeterProps, MeterStatus } from "./components/charts/Meter";
+export { StatTile } from "./components/charts/StatTile";
+export type { StatTileProps } from "./components/charts/StatTile";
+export { formatCompact, niceTicks, seriesColor } from "./components/charts/shared";

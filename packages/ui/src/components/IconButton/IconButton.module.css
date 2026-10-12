@@ -7,6 +7,5 @@
 .md { width: 40px; height: 40px; }
 .lg { width: 48px; height: 48px; }
 
-.icon > svg { width: 18px; height: 18px; }
-.sm .icon > svg { width: 16px; height: 16px; }
-.lg .icon > svg { width: 22px; height: 22px; }
+/* Pixelarticons sit on a 24 px grid: 24 px in every size keeps them crisp. */
+.icon > svg { width: var(--gs-icon); height: var(--gs-icon); shape-rendering: crispEdges; }
