@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "Europe/Athens",
+  "dependencyDashboard": true,
+  "hostRules": [
+    {
+      "description": "Private GraySilk packages. Add the token as a secret named GH_PACKAGES_TOKEN in the Renovate app settings (read:packages).",
+      "matchHost": "npm.pkg.github.com",
+      "hostType": "npm",
+      "token": "{{ secrets.GH_PACKAGES_TOKEN }}"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "GraySilk brand and UI move together (alias and real names, so the rule matches either way).",
+      "matchPackageNames": [
+        "@graysilk/ui",
+        "@graysilk/brand",
+        "@kostasgrizos/graysilk-ui",
+        "@kostasgrizos/graysilk-brand"
+      ],
+      "groupName": "GraySilk"
+    },
+    {
+      "description": "GraySilk fixes merge on their own; features and breaking changes wait for review.",
+      "matchPackageNames": [
+        "@graysilk/ui",
+        "@graysilk/brand",
+        "@kostasgrizos/graysilk-ui",
+        "@kostasgrizos/graysilk-brand"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}

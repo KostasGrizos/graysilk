@@ -1,4 +1,4 @@
-# GraySilk branding
+# GraySilk brand (`@graysilk/brand`)
 
 Everything for the GraySilk identity: the logo files, the icons, the brand guide, and the source that generates them.
 
@@ -9,7 +9,7 @@ Everything for the GraySilk identity: the logo files, the icons, the brand guide
 ## Folders
 
 ```
-branding/
+packages/brand/
 ├── BRAND_GUIDE.md
 ├── logos/
 │   ├── svg/    vector, crisp-edged. Best for web and docs
@@ -62,17 +62,24 @@ Sizes: stations 26/39/52 px wide, train 64/96/128 px, mark 32/48/64/128 px (2×,
 ## Regenerate
 
 ```bash
-cd branding   # from the root of the homelab repo
+cd packages/brand                        # in the graysilk repo
 python3 source/export.py source .        # needs Pillow (with WebP) + reportlab; also runs animate.py
 python3 source/animate.py source .       # just the loading animations
 ```
 
-Edit `source/bitmaps.py` to change a pixel; every file follows.
+Edit `source/bitmaps.py` to change a pixel; every file follows. Exports are byte-identical between runs, so `git diff` shows only real changes. Commit the regenerated files, then release (see the repo README).
 
-## Wire into the homelab
+## Use it in a project
 
-- **Dashboard:** copy `icons/dashboard/brand-mark.svg` into `apps/dashboard/public/`. Render it at 32 × 32 inside `.brand-mark`, with no background or radius.
-- **Favicons** (in the dashboard's `index.html`):
+Published as `@kostasgrizos/graysilk-brand` (GitHub Packages, private). Install it under the short name with an npm alias, so code and docs always say `@graysilk/brand`:
+
+```bash
+npm install @graysilk/brand@npm:@kostasgrizos/graysilk-brand
+```
+
+Files are then under `node_modules/@graysilk/brand/` (same folders as here). Copy what an app serves into its `public/` before dev and build; `templates/web-app/scripts/sync-brand.mjs` does that.
+
+- **Favicons** (in the app's `index.html`):
 
   ```html
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -82,6 +89,8 @@ Edit `source/bitmaps.py` to change a pixel; every file follows.
   <meta name="theme-color" content="#1B1B1E">
   ```
 
-  Copy everything in `icons/favicon/` into the dashboard's `public/`. The manifest has `id`, `start_url` and `scope` set to `/`, plus normal and **maskable** icons (`icon-maskable-*.png`: extra padding so round home-screen masks don't clip the G).
-- **Launcher:** use `icons/app-icon/GraySilk.icns` as the app icon of `Start Homelab`.
-- **UI components and maps:** React components, charts and the interactive OSM map theme live in `@graysilk/ui` (`packages/ui` in the homelab repo; maps under `@graysilk/ui/map`).
+  Copy everything in `icons/favicon/` into `public/`. The manifest has `id`, `start_url` and `scope` set to `/`, plus normal and **maskable** icons (`icon-maskable-*.png`: extra padding so round home-screen masks don't clip the G).
+- **Sidebar mark:** `icons/dashboard/brand-mark.svg`, rendered at 32 × 32 with no background or radius.
+- **macOS app icon:** `icons/app-icon/GraySilk.icns`.
+- **Without npm** (Python tools, slides, READMEs): every GitHub release of the graysilk repo has `graysilk-brand-<version>.zip` with these files.
+- **React components, charts, loaders and the map theme:** `@graysilk/ui` (`packages/ui`).

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" class="gs-root">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page title · GraySilk</title>
+<meta name="theme-color" content="#1B1B1E">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!--
+  GraySilk docs page: one self-contained file for guides, READMEs-as-pages and status pages.
+  Colours, type and spacing are the GraySilk tokens (inlined below by scripts/sync-templates.mjs;
+  don't edit between the tokens markers). Light/dark follows the system.
+  Fonts: system fallbacks unless the three brand faces are installed or served next to this page
+  (see templates/README.md).
+-->
+<style>
+/* tokens:start */
+/*
+ * GraySilk design tokens · palette "Platform Edge" · v0.4
+ * Primitives never change. Semantic tokens follow the OS by default (system);
+ * pin a subtree with data-gs-theme="dark" | "light" (or "system" to reset).
+ */
+
+:root {
+  /* ---- primitives: brand palette ---- */
+  --gs-graphite: #1b1b1e;
+  --gs-chalk: #edede9;
+  --gs-paper: #dadad5;
+  --gs-lead: #4a4a52;
+  --gs-yellow: #c98f00;
+  --gs-orange: #ff5a1f;
+
+  /* ---- primitives: derived tones (same hues, for states and light-theme text) ---- */
+  --gs-graphite-1: #232327;
+  --gs-graphite-2: #2b2b30;
+  --gs-graphite-3: #3a3a40;
+  --gs-chalk-dim: #a9a9a4;
+  --gs-white: #ffffff;
+  --gs-stone: #c4c4be;
+  --gs-yellow-deep: #7a5700;
+  --gs-orange-deep: #b33a0f;
+
+  /* ---- data: sequential ramps (theme-independent; 500 = brand) ---- */
+  --gs-safety-100: #feecce; --gs-safety-200: #f9d59b; --gs-safety-300: #e9bc70;
+  --gs-safety-400: #d9a648; --gs-safety-500: #c98f00; --gs-safety-600: #a67606;
+  --gs-safety-700: #865e00; --gs-safety-800: #694900; --gs-safety-900: #4e3500;
+  --gs-lapis-100: #e6effe; --gs-lapis-200: #c7dcff; --gs-lapis-300: #a3c5fe;
+  --gs-lapis-400: #81b0fe; --gs-lapis-500: #5d99ff; --gs-lapis-600: #3b7be8;
+  --gs-lapis-700: #2460c5; --gs-lapis-800: #174a9f; --gs-lapis-900: #103777;
+  --gs-signal-100: #ffe9e3; --gs-signal-200: #fecec0; --gs-signal-300: #ffad94;
+  --gs-signal-400: #ff8a67; --gs-signal-500: #fe602c; --gs-signal-600: #dc4502;
+  --gs-signal-700: #b13500; --gs-signal-800: #8c2800; --gs-signal-900: #691c00;
+
+  /* ---- type ---- */
+  --gs-font-pixel: "Silkscreen", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gs-font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gs-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --gs-display-size: 64px;  --gs-display-line: 64px;
+  --gs-h1-size: 40px;       --gs-h1-line: 48px;
+  --gs-h2-size: 28px;       --gs-h2-line: 36px;
+  --gs-h3-size: 20px;       --gs-h3-line: 28px;
+  --gs-body-size: 16px;     --gs-body-line: 24px;
+  --gs-small-size: 14px;    --gs-small-line: 20px;
+  --gs-label-size: 12px;    --gs-label-line: 16px;
+  --gs-code-size: 14px;     --gs-code-line: 20px;
+  --gs-label-tracking: 0.14em;
+
+  /* ---- space (8 px rhythm, 4 px half-step) ---- */
+  --gs-space-0-5: 4px;
+  --gs-space-1: 8px;
+  --gs-space-1-5: 12px;
+  --gs-space-2: 16px;
+  --gs-space-3: 24px;
+  --gs-space-4: 32px;
+  --gs-space-6: 48px;
+  --gs-space-8: 64px;
+
+  /* ---- shape, icons & motion ---- */
+  --gs-radius-control: 4px;   /* UI controls only; brand surfaces stay square */
+  --gs-ledge: 4px;            /* hard "arcade key" shadow under primary buttons */
+  --gs-icon: 24px;            /* Pixelarticons: 24 px grid, use 24 or 48 only */
+  --gs-icon-lg: 48px;
+  --gs-duration-fast: 90ms;
+  --gs-duration: 160ms;
+  --gs-steps: steps(2, end);  /* pixel motion: stepped, never eased */
+}
+
+/* ---- semantic: dark (also the base for "system", which switches to light below when the OS is light) ---- */
+:root,
+[data-gs-theme="dark"],
+[data-gs-theme="system"] {
+  --gs-bg: var(--gs-graphite);
+  --gs-surface: var(--gs-graphite-1);
+  --gs-surface-raised: var(--gs-graphite-2);
+  --gs-text: var(--gs-chalk);
+  --gs-text-muted: var(--gs-chalk-dim);
+  --gs-text-accent: var(--gs-yellow);
+  --gs-text-signal: var(--gs-orange);
+  --gs-border: var(--gs-graphite-3);          /* dividers, card edges: decorative, low contrast */
+  --gs-border-control: #76767e;                /* outlines that identify a control (inputs, toggles): ≥ 3:1 on bg and surfaces */
+  --gs-unlit: var(--gs-lead); /* unlit stations in loaders */
+  --gs-border-strong: var(--gs-chalk);
+  --gs-hover: rgb(237 237 233 / 8%);
+  --gs-press: rgb(237 237 233 / 14%);
+  --gs-accent: var(--gs-yellow);
+  --gs-accent-ink: var(--gs-graphite);
+  --gs-accent-ledge: var(--gs-yellow-deep);
+  --gs-signal: var(--gs-orange);
+  --gs-signal-ink: var(--gs-graphite);
+  --gs-signal-ledge: var(--gs-orange-deep);
+  --gs-focus: var(--gs-yellow);
+  --gs-stripe: var(--gs-yellow);
+  --gs-stripe-dot: var(--gs-graphite);
+
+  /* data: categorical "lines" (validated on --gs-surface #232327) */
+  --gs-series-1: #4c8df6; /* Lapis   */
+  --gs-series-2: #ba8400; /* Safety  */
+  --gs-series-3: #e0609f; /* Magenta */
+  --gs-series-4: #7a9a2a; /* Moss    */
+  --gs-series-5: #8f78ec; /* Violet  */
+  --gs-series-6: #ee5219; /* Signal  */
+  --gs-series-7: #2e9bd0; /* Sky     */
+  --gs-series-8: #e0544b; /* Brick   */
+  /* data: status (railway signal aspects; always with icon + label) */
+  --gs-status-ok: #3fae52;
+  --gs-status-caution: #e8a800;
+  --gs-status-attention: #ff5a1f;
+  --gs-status-stop: #e5484d;
+  --gs-status-unknown: #8a8a92;
+  /* data: chrome */
+  --gs-grid: #2f2f35;
+  --gs-axis: #45454c;
+  --gs-div-mid: #3a3a40;
+  color-scheme: dark;
+}
+
+/* ---- semantic: light (explicit, or the OS default) ---- */
+[data-gs-theme="light"] {
+  --gs-bg: var(--gs-chalk);
+  --gs-surface: var(--gs-white);
+  --gs-surface-raised: var(--gs-white);
+  --gs-text: var(--gs-graphite);
+  --gs-text-muted: var(--gs-lead);
+  --gs-text-accent: var(--gs-yellow-deep);
+  --gs-text-signal: var(--gs-orange-deep);
+  --gs-border: var(--gs-stone);
+  --gs-border-control: #85857f;
+  --gs-unlit: var(--gs-stone);
+  --gs-border-strong: var(--gs-graphite);
+  --gs-hover: rgb(27 27 30 / 6%);
+  --gs-press: rgb(27 27 30 / 11%);
+  --gs-focus: var(--gs-graphite);
+  --gs-series-1: #2f6fdb;
+  --gs-series-2: #b07c00;
+  --gs-series-3: #d2479b;
+  --gs-series-4: #6c8a1e;
+  --gs-series-5: #7b5ce0;
+  --gs-series-6: #ff5a1f;
+  --gs-series-7: #1c93c9;
+  --gs-series-8: #b4322c;
+  --gs-status-ok: #2e9e44;
+  --gs-status-stop: #d7262e;
+  --gs-grid: #e6e6e1;
+  --gs-axis: #c4c4be;
+  --gs-div-mid: #d9d9d4;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-gs-theme="dark"]),
+  [data-gs-theme="system"] {
+    --gs-bg: var(--gs-chalk);
+    --gs-surface: var(--gs-white);
+    --gs-surface-raised: var(--gs-white);
+    --gs-text: var(--gs-graphite);
+    --gs-text-muted: var(--gs-lead);
+    --gs-text-accent: var(--gs-yellow-deep);
+    --gs-text-signal: var(--gs-orange-deep);
+    --gs-border: var(--gs-stone);
+    --gs-border-control: #85857f;
+    --gs-unlit: var(--gs-stone);
+    --gs-border-strong: var(--gs-graphite);
+    --gs-hover: rgb(27 27 30 / 6%);
+    --gs-press: rgb(27 27 30 / 11%);
+    --gs-focus: var(--gs-graphite);
+    --gs-series-1: #2f6fdb;
+    --gs-series-2: #b07c00;
+    --gs-series-3: #d2479b;
+    --gs-series-4: #6c8a1e;
+    --gs-series-5: #7b5ce0;
+    --gs-series-6: #ff5a1f;
+    --gs-series-7: #1c93c9;
+    --gs-series-8: #b4322c;
+    --gs-status-ok: #2e9e44;
+    --gs-status-stop: #d7262e;
+    --gs-grid: #e6e6e1;
+    --gs-axis: #c4c4be;
+    --gs-div-mid: #d9d9d4;
+    color-scheme: light;
+  }
+}
+/* tokens:end */
+
+/* ---- page ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--gs-bg); color: var(--gs-text); font-family: var(--gs-font-sans); font-size: var(--gs-body-size); line-height: var(--gs-body-line); -webkit-font-smoothing: antialiased; }
+body { margin: 0; }
+a { color: inherit; text-decoration-color: var(--gs-accent); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { text-decoration-color: currentColor; }
+:focus-visible { outline: 2px solid var(--gs-focus); outline-offset: 2px; }
+
+.top { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background: var(--gs-surface); border-bottom: 1px solid var(--gs-border); }
+.top svg { display: block; flex-shrink: 0; }
+.top .name { font-family: var(--gs-font-pixel); font-weight: 700; font-size: 20px; line-height: 24px; letter-spacing: 0; }
+.top .meta { margin-left: auto; font-family: var(--gs-font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gs-text-muted); }
+.stripe { height: 12px; background-color: var(--gs-stripe); background-image: linear-gradient(90deg, var(--gs-stripe-dot) 0 4px, transparent 4px 12px); background-size: 12px 4px; background-position: 4px center; background-repeat: repeat-x; }
+
+main { max-width: 72ch; margin: 0 auto; padding: 48px 24px 64px; }
+.eyebrow { margin: 0 0 8px; font-family: var(--gs-font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gs-text-muted); }
+h1 { margin: 0 0 16px; font-family: var(--gs-font-pixel); font-weight: 700; font-size: var(--gs-h1-size); line-height: var(--gs-h1-line); text-wrap: balance; }
+h2 { margin: 48px 0 12px; font-size: var(--gs-h2-size); line-height: var(--gs-h2-line); font-weight: 600; letter-spacing: -0.01em; }
+h3 { margin: 32px 0 8px; font-size: var(--gs-h3-size); line-height: var(--gs-h3-line); font-weight: 600; }
+p, ul, ol, table, pre, .callout { margin: 0 0 16px; }
+.lead { font-size: 18px; line-height: 28px; color: var(--gs-text-muted); }
+li + li { margin-top: 4px; }
+code { font-family: var(--gs-font-mono); font-size: 0.875em; padding: 1px 5px; background: var(--gs-surface-raised); border: 1px solid var(--gs-border); }
+pre { overflow-x: auto; padding: 16px; background: var(--gs-surface); border: 1px solid var(--gs-border); font-family: var(--gs-font-mono); font-size: var(--gs-code-size); line-height: var(--gs-code-line); }
+pre code { padding: 0; background: none; border: 0; font-size: inherit; }
+table { width: 100%; border-collapse: collapse; font-size: var(--gs-small-size); line-height: var(--gs-small-line); }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--gs-border); vertical-align: top; }
+th { font-family: var(--gs-font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gs-text-muted); font-weight: 600; }
+hr { border: 0; border-top: 1px solid var(--gs-border); margin: 48px 0; }
+
+/* status: railway signal aspects, always an icon-like square + a word */
+.status { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+.status::before { content: ""; width: 10px; height: 10px; background: var(--c, var(--gs-status-unknown)); }
+.status.ok { --c: var(--gs-status-ok); }
+.status.caution { --c: var(--gs-status-caution); }
+.status.attention { --c: var(--gs-status-attention); }
+.status.stop { --c: var(--gs-status-stop); }
+
+.callout { padding: 12px 16px; border-left: 4px solid var(--c, var(--gs-accent)); background: var(--gs-surface); }
+.callout strong:first-child { display: block; margin-bottom: 2px; font-family: var(--gs-font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+.callout.warning { --c: var(--gs-status-attention); }
+
+footer { padding: 24px; border-top: 1px solid var(--gs-border); color: var(--gs-text-muted); font-size: var(--gs-small-size); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+</style>
+</head>
+<body>
+<header class="top">
+  <!-- mark:start -->
+  <!-- the 16 × 16 mark; the line follows the text colour -->
+  <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true"><rect x="5" y="1" width="8" height="1" fill="currentColor"/><rect x="4" y="2" width="4" height="1" fill="currentColor"/><rect x="8" y="2" width="1" height="1" fill="#FF5A1F"/><rect x="9" y="2" width="4" height="1" fill="currentColor"/><rect x="3" y="3" width="2" height="1" fill="currentColor"/><rect x="2" y="4" width="2" height="1" fill="currentColor"/><rect x="1" y="5" width="2" height="1" fill="currentColor"/><rect x="1" y="6" width="2" height="1" fill="currentColor"/><rect x="1" y="7" width="2" height="1" fill="currentColor"/><rect x="8" y="7" width="2" height="1" fill="#C98F00"/><rect x="10" y="7" width="5" height="1" fill="currentColor"/><rect x="1" y="8" width="2" height="1" fill="currentColor"/><rect x="8" y="8" width="2" height="1" fill="#C98F00"/><rect x="10" y="8" width="5" height="1" fill="currentColor"/><rect x="1" y="9" width="1" height="1" fill="#FF5A1F"/><rect x="2" y="9" width="1" height="1" fill="currentColor"/><rect x="13" y="9" width="2" height="1" fill="currentColor"/><rect x="1" y="10" width="2" height="1" fill="currentColor"/><rect x="13" y="10" width="2" height="1" fill="currentColor"/><rect x="2" y="11" width="2" height="1" fill="currentColor"/><rect x="12" y="11" width="2" height="1" fill="currentColor"/><rect x="3" y="12" width="2" height="1" fill="currentColor"/><rect x="11" y="12" width="2" height="1" fill="currentColor"/><rect x="4" y="13" width="4" height="1" fill="currentColor"/><rect x="8" y="13" width="1" height="1" fill="#FF5A1F"/><rect x="9" y="13" width="4" height="1" fill="currentColor"/><rect x="5" y="14" width="7" height="1" fill="currentColor"/></svg>
+  <!-- mark:end -->
+  <span class="name">GraySilk</span>
+  <span class="meta">Guide</span>
+</header>
+<div class="stripe" aria-hidden="true"></div>
+
+<main>
+  <p class="eyebrow">Section · Updated 13 Oct 2026</p>
+  <h1>Page title</h1>
+  <p class="lead">One or two sentences on what this page helps the reader do.</p>
+
+  <h2>Status</h2>
+  <table>
+    <thead><tr><th>Service</th><th>State</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Dashboard</td><td><span class="status ok">OK</span></td><td>Running</td></tr>
+      <tr><td>Backups</td><td><span class="status caution">Caution</span></td><td>Last run 26 h ago</td></tr>
+      <tr><td>Photos</td><td><span class="status stop">Stopped</span></td><td>Disk full</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Do the first thing.</li>
+    <li>Run <code>homelabctl status</code> and check the output.</li>
+  </ol>
+  <pre><code>npm install
+npm run build</code></pre>
+
+  <div class="callout"><strong>Note</strong>Something useful to know, in a sentence or two.</div>
+  <div class="callout warning"><strong>Careful</strong>Something that can go wrong, and how to avoid it.</div>
+
+  <h3>Smaller heading</h3>
+  <p>Body text sets in IBM Plex Sans at 16/24. Links get a <a href="#">safety-yellow underline</a>.</p>
+</main>
+
+<footer>
+  <span>GraySilk · page owner</span>
+  <span>Source: link to where this page lives</span>
+</footer>
+</body>
+</html>

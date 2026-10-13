@@ -1,6 +1,4 @@
 import maplibregl, { type LngLatBoundsLike, type Map as GLMap, type PaddingOptions } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import "./map.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { MapContext } from "./context";
 import { ZoomIn } from "pixelarticons/react/ZoomIn.js";

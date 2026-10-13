@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "timezone": "Europe/Athens",
+  "dependencyDashboard": true,
+  "prHourlyLimit": 1,
+  "packageRules": [
+    {
+      "description": "The three brand faces move together.",
+      "matchPackageNames": ["@fontsource/**"],
+      "groupName": "Fonts"
+    },
+    {
+      "description": "Icons are part of the look: review every change.",
+      "matchPackageNames": ["pixelarticons"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}

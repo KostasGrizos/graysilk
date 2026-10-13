@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+# copied from @graysilk/brand by scripts/sync-brand.mjs
+public/brand/
+public/favicon.*
+public/apple-touch-icon.png
+public/icon-*.png
+public/site.webmanifest

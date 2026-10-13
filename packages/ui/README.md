@@ -1,35 +1,38 @@
 # @graysilk/ui
 
-React components for the GraySilk brand (palette "Platform Edge"). It ships as a **source package**: TypeScript and CSS Modules, compiled by the consuming Vite app. There is no build step here.
+React components for the GraySilk brand (palette "Platform Edge"). It is built with Vite (library mode) into ES modules, one CSS file and TypeScript types, and published privately to GitHub Packages.
 
-- Brand guide: `/Volumes/Homelab/branding/BRAND_GUIDE.md`
-- Status: **v0.5**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, `StatusPill`, `LineMap`, loading (`Loader`, `PixelTrain`, `ProgressBar`), charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
+- Brand guide: [`packages/brand/BRAND_GUIDE.md`](../brand/BRAND_GUIDE.md)
+- Status: **v0.6**: tokens, `Text`, `Button`, `IconButton`, `Badge`, `Card`, `Icon`, `StatusPill`, `LineMap`, loading (`Loader`, `PixelTrain`, `ProgressBar`), charts (`LineChart`, `BarChart`, `Meter`, `StatTile`, `ChartFrame`) and maps (`@graysilk/ui/map`).
 - Theme: follows the OS by default. Pin with `data-gs-theme="dark"|"light"` on any element; `data-gs-theme="system"` follows the OS again inside a pinned area.
 - Borders: `--gs-border` is for dividers and card edges (decorative). Outlines that identify a control (inputs, toggles, checkboxes) use `--gs-border-control`, which keeps 3:1 against every background.
 - Touch: on touch screens (`pointer: coarse`) buttons grow to 44 px (md) and 40 px (sm).
 
-## Use it in a Vite app (e.g. apps/dashboard)
+## Use it in an app
 
-1. Point the app at the package. In `vite.config.ts`:
+Published privately to GitHub Packages as `@kostasgrizos/graysilk-ui`. Install it under the short name with an npm alias, so imports stay `@graysilk/ui`:
+
+1. Once per machine, a GitHub token with `read:packages` in `~/.npmrc` (see the graysilk README). In the app, an `.npmrc` with:
+
+   ```ini
+   @kostasgrizos:registry=https://npm.pkg.github.com
+   ```
+
+2. Install (React 18.3+ is a peer dependency; add `maplibre-gl` only if you use the maps):
+
+   ```bash
+   npm install @graysilk/ui@npm:@kostasgrizos/graysilk-ui
+   ```
+
+3. Load styles once. `fonts.css` bundles the three brand faces from npm (`@fontsource`, OFL), so they are served by your own app, never fetched from Google, and work offline.
 
    ```ts
-   resolve: { alias: { "@graysilk/ui": path.resolve(__dirname, "../../packages/ui/src") } }
+   import "@graysilk/ui/fonts.css";
+   import "@graysilk/ui/styles.css";   // tokens + base + all component styles
+   import "@graysilk/ui/map.css";      // only with @graysilk/ui/map
    ```
 
-   In `tsconfig.app.json`:
-
-   ```json
-   "paths": { "@graysilk/ui": ["../../packages/ui/src"] }
-   ```
-
-2. Load styles once. `fonts.css` bundles the three brand faces from npm (`@fontsource`, OFL), so they are served by your own app, never fetched from Google, and work offline. Run `npm install` in `packages/ui` so the app build can find them.
-
-   ```ts
-   import "../../packages/ui/src/styles/fonts.css";
-   import "../../packages/ui/src/styles/index.css";
-   ```
-
-3. Choose a theme on the root and use the components:
+4. Choose a theme on the root and use the components:
 
    ```html
    <html class="gs-root">   <!-- follows the OS; or data-gs-theme="dark" | "light" -->
@@ -38,6 +41,8 @@ React components for the GraySilk brand (palette "Platform Edge"). It ships as a
    ```tsx
    import { Button, Card, CardHeader, Badge } from "@graysilk/ui";
    ```
+
+`templates/web-app` in the graysilk repo is a ready-made app with all of this done.
 
 ## Rules the components follow
 
@@ -95,6 +100,7 @@ import { Loader, PixelTrain, ProgressBar } from "@graysilk/ui";
 An interactive OpenStreetMap in the brand, with your own layers on top. It needs `maplibre-gl` (optional peer dependency) and is a separate entry, so apps without maps don't load it.
 
 ```tsx
+import "@graysilk/ui/map.css";   // once: MapLibre's styles + the GraySilk map theme
 import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, VehicleLayer, MapLegend,
   bbox, catchment, parallelOffset } from "@graysilk/ui/map";
 
@@ -125,9 +131,12 @@ import { MapView, LineLayer, StationLayer, AreaLayer, PointLayer, MapPopup, Vehi
 
 ## Scripts
 
+Run from the repo root (npm workspaces) or here:
+
 ```bash
 npm install
-npm run playground   # live specimen page (vite dev server)
+npm run playground   # live specimen page (vite dev server, uses the source directly)
 npm test             # vitest + testing-library
 npm run typecheck
+npm run build        # dist/: index.js, map.js, styles.css, tokens.css, fonts.css, map.css, types/
 ```

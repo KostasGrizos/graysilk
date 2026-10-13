@@ -1,0 +1,45 @@
+name: Release
+
+# Push a tag like v0.6.0 (npm run release -- 0.6.0 makes it) to publish both packages
+# to GitHub Packages and attach the brand files to a GitHub release.
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write   # create the GitHub release
+  packages: write   # publish to npm.pkg.github.com
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@kostasgrizos"
+      - name: Tag matches package versions
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          for p in packages/ui packages/brand; do
+            v=$(node -p "require('./$p/package.json').version")
+            [ "$v" = "$tag" ] || { echo "$p is $v, tag is $tag"; exit 1; }
+          done
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/sync-templates.mjs --check
+      - name: Publish @kostasgrizos/graysilk-ui and @kostasgrizos/graysilk-brand
+        run: npm publish --workspaces
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: GitHub release with the brand files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd packages/brand && zip -qr "../../graysilk-brand-${GITHUB_REF_NAME}.zip" logos icons loading social BRAND_GUIDE.md README.md)
+          gh release create "$GITHUB_REF_NAME" "graysilk-brand-${GITHUB_REF_NAME}.zip" --title "$GITHUB_REF_NAME" --generate-notes

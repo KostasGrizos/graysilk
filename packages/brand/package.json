@@ -1,0 +1,30 @@
+{
+  "name": "@kostasgrizos/graysilk-brand",
+  "version": "0.6.0",
+  "description": "GraySilk brand assets: logos, icons, favicons, loading animations, social images and the brand guide.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KostasGrizos/graysilk.git",
+    "directory": "packages/brand"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "logos",
+    "icons",
+    "loading",
+    "social",
+    "source/*.py",
+    "BRAND_GUIDE.md",
+    "README.md"
+  ],
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "export": "python3 source/export.py source ."
+  }
+}

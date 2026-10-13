@@ -1,0 +1,22 @@
+{
+  "name": "graysilk",
+  "private": true,
+  "description": "The GraySilk identity: brand assets, React components and project templates.",
+  "type": "module",
+  "workspaces": [
+    "packages/ui",
+    "packages/brand"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "check": "npm run typecheck && npm test && npm run build && node scripts/sync-templates.mjs --check",
+    "playground": "npm run playground -w packages/ui",
+    "release": "node scripts/release.mjs",
+    "sync:templates": "node scripts/sync-templates.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

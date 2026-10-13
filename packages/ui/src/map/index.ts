@@ -1,5 +1,6 @@
 // Interactive maps (MapLibre GL + OpenStreetMap). Separate entry so apps without maps
 // don't load maplibre-gl:  import { MapView, LineLayer } from "@graysilk/ui/map";
+// Also import the map styles once:  import "@graysilk/ui/map.css";
 export { MapView, useMap } from "./MapView";
 export type { MapViewProps } from "./MapView";
 export { LineLayer, AreaLayer, parallelOffset } from "./layers";
